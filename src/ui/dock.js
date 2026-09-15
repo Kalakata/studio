@@ -265,9 +265,7 @@ export function createDock(app) {
     showSelection, parkBar, autoFold, syncInputs, setQuality, setMeasure, setClashes, setSunMapLegend, setSunMapHover,
     setSunReadout(s) {
       $('sun-time').textContent = clock(state.minutes);
-      $('sun-pos').textContent = s.alt < 0
-        ? `Below the horizon, ${point(s.az)}`
-        : `${Math.round(s.alt)}° up, from ${point(s.az)} ${Math.round(s.az)}°`;   // wraps as one phrase
+      $('sun-pos').textContent = s.alt < 0 ? 'Below the horizon' : `${Math.round(s.alt)}° up, ${point(s.az)}`;
       drawDial(s);
     },
     activeView: () => document.querySelector('[data-view][aria-pressed="true"]')?.dataset.view || 'iso'

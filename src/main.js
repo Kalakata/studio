@@ -33,7 +33,7 @@ const canvas = document.getElementById('view');
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 const m2 = (v) => v.toFixed(2);
-document.getElementById('plate-dims').textContent = `${m2(L)} × ${m2(W)} m, ${m2(H)} m clear`;
+document.getElementById('plate-dims').textContent = `${m2(L)} × ${m2(W)} × ${m2(H)} m`;
 document.getElementById('plate-site').textContent = ROOM.site.name;
 document.title = `Studio shell — ${+L.toFixed(2)} × ${+W.toFixed(2)} × ${+H.toFixed(2)} m`;
 
