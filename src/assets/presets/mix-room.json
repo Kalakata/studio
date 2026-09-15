@@ -1,0 +1,30 @@
+{
+  "_note": "The studio on its own: Pallet studio without the lounge and the decor (no sofa, coffee table, shelving, plants or amp), keeping everything that makes the room work for mixing, each piece exactly where Pallet studio has it. Facing the solid back wall, listening position 4.16 m (36%) from it with a 1.35 m equilateral triangle, Rokit 7 G4 monitors on stands toed in 30 deg, the pallet desk and chair. Treatment: reflection panels at the back-wall and mural-wall first-reflection points, free-standing panels in front of the window where the other side reflection falls on glass, corner bass traps in the back corners, four membrane traps tuned to the 45 Hz length mode, panels on the window-wall piers, the ceiling covered with fitted panels (coverCeiling), rugs on the tiles under the mix position and at the street end, both on the centreline, and heavy curtains on the two street windows (open; draw them when mixing). The street end is left free. Metres from the room centre; ry in degrees.",
+  "name": "Mix room",
+  "items": [
+    { "type": "pallet-desk",      "x": -2.13,  "z": 0,      "ry": 90 },
+    { "type": "chair",            "x": -1.455, "z": 0,      "ry": -90 },
+    { "type": "listener",         "x": -1.54,  "z": 0,      "ry": -90 },
+    { "type": "monitor-stand",    "x": -2.709, "z": -0.675,  "ry": 60 },
+    { "type": "monitor-stand",    "x": -2.709, "z": 0.675,   "ry": 120 },
+    { "type": "reflection-panel", "x": -5.65,  "z": -0.4,   "ry": 90 },
+    { "type": "reflection-panel", "x": -5.65,  "z": 0.4,    "ry": 90 },
+    { "type": "reflection-panel", "x": -2.185, "z": 1.925,  "ry": 180 },
+    { "type": "gobo",             "x": -2.21,  "z": -1.57,  "ry": 0 },
+    { "type": "corner-trap",      "x": -5.4,   "z": -1.825, "ry": 0 },
+    { "type": "corner-trap",      "x": -5.4,   "z": 1.825,  "ry": 0 },
+    { "type": "membrane-trap",    "x": -5.58,  "z": -1.215, "ry": 90 },
+    { "type": "membrane-trap",    "x": -5.58,  "z": 1.215,  "ry": 90 },
+    { "type": "membrane-trap",    "x": -1.4,   "z": 1.855,  "ry": 180 },
+    { "type": "membrane-trap",    "x": 1.75,   "z": 1.855,  "ry": 180 },
+    { "type": "rug",              "x": -2.1,   "z": 0,      "ry": 0 },
+    { "type": "rug",              "x": 3.4,    "z": 0,      "ry": 0 },
+    { "type": "curtain",          "x": 5.58,   "z": -0.858, "ry": -90, "open": true },
+    { "type": "curtain",          "x": 5.58,   "z": 0.858,  "ry": -90, "open": true },
+    { "type": "panel",            "x": -3.15,  "z": -1.935, "ry": 0 },
+    { "type": "panel",            "x": -1.05,  "z": -1.935, "ry": 0 },
+    { "type": "panel",            "x": 1.05,   "z": -1.935, "ry": 0 },
+    { "type": "panel",            "x": 3.15,   "z": -1.935, "ry": 0 }
+  ],
+  "coverCeiling": true
+}

@@ -1,0 +1,23 @@
+{
+  "_note": "The concept render from the brief, the first default layout; now a preset. Positions in metres from the room centre; ry in degrees.",
+  "name": "Concept render",
+  "items": [
+    { "type": "desk",  "x": 5.34,  "z": 0,      "ry": -90 },
+    { "type": "chair", "x": 4.35,  "z": 0,      "ry": 90 },
+    { "type": "sofa",  "x": 0.6,   "z": 1.495,  "ry": 180 },
+    { "type": "table", "x": 0.6,   "z": 0.70,   "ry": 0 },
+    { "type": "rug",   "x": 0.4,   "z": 0.35,   "ry": 0 },
+    { "type": "shelf", "x": -4.0,  "z": -1.765, "ry": 0 },
+    { "type": "shelf", "x": -1.5,  "z": -1.765, "ry": 0 },
+    { "type": "plant", "x": 3.8,   "z": -1.525, "ry": 0 },
+    { "type": "plant", "x": -5.2,  "z": 1.475,  "ry": 0 },
+    { "type": "amp",   "x": 3.6,   "z": 1.525,  "ry": 180 },
+    { "type": "pa",    "x": 2.8,   "z": 1.425,  "ry": 180 },
+    { "type": "panel", "x": -3.15, "z": -1.935, "ry": 0 },
+    { "type": "panel", "x": -1.05, "z": -1.935, "ry": 0 },
+    { "type": "panel", "x": 1.05,  "z": -1.935, "ry": 0 },
+    { "type": "panel", "x": 3.15,  "z": -1.935, "ry": 0 },
+    { "type": "panel", "x": -4.6,  "z": 1.935,  "ry": 180 },
+    { "type": "panel", "x": -2.9,  "z": 1.935,  "ry": 180 }
+  ]
+}

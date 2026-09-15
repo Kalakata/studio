@@ -1,0 +1,356 @@
+:root{
+  --panel:rgba(243,244,240,.93);
+  --ink:#1C2530;
+  --ink-soft:#5E6A77;
+  --blue:#23486F;
+  --rule:#C6CBC2;
+  --radius:3px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{
+  background:#0f1419;color:var(--ink);
+  font-family:'Archivo',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  font-size:15px;line-height:1.4;-webkit-font-smoothing:antialiased;
+}
+#view{display:block;width:100vw;height:100dvh;touch-action:none;cursor:grab}
+#view:active{cursor:grabbing}
+
+.plate{
+  position:fixed;top:calc(12px + env(safe-area-inset-top));left:12px;
+  background:var(--panel);border:1px solid var(--rule);border-radius:var(--radius);
+  padding:9px 12px 10px;pointer-events:none;
+}
+.plate h1{font-size:13.5px;font-weight:600;letter-spacing:-.01em}
+.plate p{font-size:12.5px;color:var(--ink-soft);font-variant-numeric:tabular-nums}
+
+/* the sun instrument: north-up sky dial (centre = overhead, rim = horizon) with today's path,
+   the room at its true bearing, and the sun; beside it the clock time and the sun's position */
+.sun{
+  position:fixed;top:calc(12px + env(safe-area-inset-top));right:12px;
+  display:flex;align-items:center;gap:10px;
+  background:var(--panel);border:1px solid var(--rule);border-radius:var(--radius);
+  padding:6px 12px 6px 6px;pointer-events:none;backdrop-filter:blur(4px);
+  font-variant-numeric:tabular-nums;
+}
+.sun .read{text-align:right}
+.sun b{display:block;font-size:21px;font-weight:600;letter-spacing:-.02em;line-height:1.15}
+.sun span{display:block;font-size:12px;color:var(--ink-soft);white-space:nowrap}
+.dial{width:88px;height:88px;flex:none;overflow:visible}
+.dial .sky{fill:#fff;stroke:var(--rule);stroke-width:1}
+.dial .alt45{fill:none;stroke:var(--rule);stroke-width:.6;stroke-dasharray:1.5 2}
+.dial .tick{stroke:var(--ink);stroke-width:1.2}
+.dial .north{font:600 7px Archivo,system-ui,sans-serif;fill:var(--ink-soft);text-anchor:middle;dominant-baseline:middle}
+.dial .path{fill:none;stroke:#f5723f;stroke-width:1;stroke-opacity:.55;stroke-linecap:round;stroke-linejoin:round}
+.dial .room{fill:#e6e8e2;stroke:var(--ink);stroke-width:.9}
+.dial .glass{stroke:var(--blue);stroke-width:2.4;stroke-linecap:butt}
+.dial .dot{fill:#f5723f;stroke:#fff;stroke-width:1.2}
+.dial .dot.down{fill:#fff;stroke:var(--ink-soft);stroke-width:1}
+
+.dock{
+  position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));
+  max-width:560px;margin:0 auto;
+  background:rgba(243,244,240,.78);border:1px solid rgba(198,203,194,.7);border-radius:var(--radius);
+  padding:12px 14px 13px;backdrop-filter:blur(4px);
+  pointer-events:none;              /* drag the model straight through the panel */
+}
+.dock input,.dock button,.dock select,.dock .cap,.dock .state{pointer-events:auto}
+.dock.closed .body{display:none}
+/* the body never grows past the room between the top boxes and the window's bottom edge;
+   it only takes the pointer when it actually has to scroll (see parkBar in dock.js) */
+.dock .body{max-height:calc(100dvh - 150px - env(safe-area-inset-top) - env(safe-area-inset-bottom));overflow:hidden}
+.dock.scrolls .body{overflow:auto;overscroll-behavior:contain;pointer-events:auto}
+.dock .head{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+.dock .head strong{font-size:13px;font-weight:500;color:var(--ink-soft)}
+.dock .body{margin-top:10px}
+
+.slider + .slider{margin-top:11px}
+.slider .cap{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:3px}
+.slider .cap span{font-size:12.5px;color:var(--ink-soft)}
+.slider .cap b{font-size:13.5px;font-weight:600;font-variant-numeric:tabular-nums}
+input[type=range]{
+  -webkit-appearance:none;appearance:none;width:100%;height:20px;background:transparent;cursor:pointer;
+}
+input[type=range]::-webkit-slider-runnable-track{height:3px;background:var(--rule);border-radius:2px}
+input[type=range]::-moz-range-track{height:3px;background:var(--rule);border-radius:2px}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:19px;height:19px;border-radius:50%;
+  background:var(--blue);border:2px solid #fff;margin-top:-8px;
+}
+input[type=range]::-moz-range-thumb{
+  width:17px;height:17px;border-radius:50%;background:var(--blue);border:2px solid #fff;
+}
+input[type=range]:focus-visible{outline:2px solid var(--blue);outline-offset:3px;border-radius:3px}
+
+.row{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+button{
+  font:inherit;font-size:13px;color:var(--ink);background:#fff;
+  border:1px solid var(--rule);border-radius:var(--radius);padding:6px 10px;cursor:pointer;
+}
+button:hover{border-color:#8E968B}
+button:focus-visible{outline:2px solid var(--blue);outline-offset:1px}
+button[aria-pressed="true"]{background:var(--blue);border-color:var(--blue);color:#fff}
+.ghost{background:transparent;border-color:transparent;color:var(--ink-soft);padding:4px 2px}
+.ghost:hover{color:var(--ink);border-color:transparent}
+hr{border:none;border-top:1px solid var(--rule);margin:12px 0 0}
+/* tabs: one strip, the open tab lifted out of it */
+.tabs{display:flex;gap:2px;padding:2px;background:rgba(28,37,48,.07);border-radius:5px}
+.tabs button{padding:5px 11px;font-size:13px;font-weight:500;color:var(--ink-soft);background:transparent;border-color:transparent}
+.tabs button:hover{color:var(--ink);border-color:transparent}
+.tabs button[aria-pressed="true"]{background:#fff;color:var(--ink);border-color:var(--rule)}
+
+/* independent on/off switches carry a small check square (not a round radio: several can be on);
+   the filled blue look is kept for picking one of several */
+.toggle,[data-toggle]{display:inline-flex;align-items:center;gap:7px}
+.toggle::before,[data-toggle]::before{
+  content:"";width:10px;height:10px;border-radius:2px;flex:none;
+  border:1.5px solid var(--ink-soft);background:transparent;
+}
+.dock .toggle[aria-pressed="true"],.dock [data-toggle][aria-pressed="true"]{background:#fff;color:var(--ink);border-color:var(--blue)}
+.dock .toggle[aria-pressed="true"]::before,.dock [data-toggle][aria-pressed="true"]::before{background:var(--blue);border-color:var(--blue)}
+
+/* one of two: joined into a single control */
+.choice{display:inline-flex}
+.choice button{border-radius:0}
+.choice button:first-child{border-radius:var(--radius) 0 0 var(--radius)}
+.choice button:last-child{border-radius:0 var(--radius) var(--radius) 0}
+.choice button + button{margin-left:-1px}
+.choice button[aria-pressed="true"]{position:relative}
+.note{font-size:12.5px;color:var(--ink-soft);margin-bottom:9px}
+#palette button{font-size:12.5px;padding:6px 9px}
+.row .label{font-size:12.5px;color:var(--ink-soft);align-self:center;margin-right:4px}
+button:disabled{opacity:.45;cursor:default}
+button:disabled:hover{border-color:var(--rule)}
+
+.pick{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px}
+.pick select{
+  font:inherit;font-size:13.5px;color:var(--ink);background:#fff;
+  border:1px solid var(--rule);border-radius:var(--radius);padding:6px 8px;
+  flex:1 1 180px;min-width:0;max-width:100%;
+}
+.pick select:focus-visible{outline:2px solid var(--blue);outline-offset:1px}
+.pick .state{font-size:12.5px;color:var(--ink-soft)}
+
+.problems{
+  position:fixed;top:calc(96px + env(safe-area-inset-top));left:12px;right:12px;max-width:560px;
+  background:#8a3b2f;color:#fff;border-radius:var(--radius);padding:8px 12px;font-size:13px;
+}
+
+.sel{
+  position:fixed;left:12px;right:12px;bottom:calc(84px + env(safe-area-inset-bottom));
+  max-width:560px;margin:0 auto;display:flex;align-items:center;gap:6px;flex-wrap:wrap;
+  background:rgba(28,37,48,.92);border-radius:var(--radius);padding:8px 10px;
+}
+.sel[hidden]{display:none}
+.sel strong{color:#F3F4F0;font-size:13px;font-weight:600;margin-right:auto}
+/* light buttons on the dark bar: set the ink here too, or a pressed button (the lock, when locked)
+   picks up the generic pressed rule's white text on this light background */
+.sel button,.sel button[aria-pressed]{font-size:12.5px;padding:5px 9px;background:#F3F4F0;color:var(--ink);border-color:transparent}
+/* unavailable (a locked piece): outlined in soft grey, still readable on the dark bar */
+.sel button:disabled{background:transparent;color:#AAB4BF;border-color:rgba(170,180,191,.5);opacity:1}
+.sel .ghost{background:transparent;color:#AAB4BF}
+
+/* shell editor */
+.list{display:flex;flex-direction:column;gap:6px;margin-top:10px;max-height:max(120px,26dvh);overflow:auto;pointer-events:auto}
+.list:empty{display:none}
+.orow{
+  display:grid;grid-template-columns:auto repeat(4,minmax(0,1fr)) auto auto;gap:4px 6px;align-items:end;
+  padding:6px;border:1px solid var(--rule);border-radius:var(--radius);background:rgba(255,255,255,.55);
+}
+.orow.selected{border-color:#f08c00;box-shadow:inset 0 0 0 1px #f08c00}
+.orow.prow{grid-template-columns:repeat(2,minmax(0,1fr)) repeat(2,minmax(0,1fr))}
+.orow.prow strong{grid-column:1 / span 3;font-size:13px;font-weight:600;align-self:center}
+.orow.prow .oremove{grid-column:4;justify-self:end}
+.field{display:flex;flex-direction:column;gap:2px;font-size:11px;color:var(--ink-soft);min-width:0}
+.field input,.orow select{
+  font:inherit;font-size:13px;color:var(--ink);width:100%;min-width:0;padding:4px 5px;
+  border:1px solid var(--rule);border-radius:var(--radius);background:#fff;font-variant-numeric:tabular-nums;pointer-events:auto;
+}
+.field input:disabled{background:transparent;color:var(--ink-soft)}
+.orow .oname{padding:5px 8px;white-space:nowrap}
+.orow .oremove{padding:4px 6px;font-size:14px}
+.note.tip{margin:10px 0 0}
+.clash{margin:10px 0 0;color:#a61e4d}
+.clash.ok{color:var(--ink-soft)}
+
+/* sun-hours legend: a light chart surface; text in ink, never in the ramp colours */
+/* bottom-left, beside the dock, so it never sits on the plan; on narrow screens, at the top */
+.legend{
+  position:fixed;left:12px;bottom:calc(12px + env(safe-area-inset-bottom));
+  width:min(320px,calc(50vw - 300px));background:var(--panel);border:1px solid var(--rule);border-radius:var(--radius);
+  padding:8px 12px 10px;font-variant-numeric:tabular-nums;
+}
+@media (max-width:1240px){
+  .legend{bottom:auto;top:calc(84px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);width:min(440px,calc(100vw - 24px))}
+}
+.legend[hidden]{display:none}
+.lhead{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.lhead strong{font-size:13.5px;font-weight:600}
+.lhead .ghost{padding:2px 4px;font-size:14px}
+.lwhen{font-size:12.5px;color:var(--ink);margin-top:1px}
+.lnote{font-size:11.5px;color:var(--ink-soft)}
+.lscale{display:flex;align-items:flex-start;gap:12px;margin-top:8px}
+.lnone{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--ink-soft);white-space:nowrap;padding-top:1px}
+.lnone i{display:inline-block;width:14px;height:12px;border-radius:2px;background:#dcdfd7}
+.lramp{flex:1;min-width:0}
+.lbar{height:12px;border-radius:2px;background:linear-gradient(to right,#ffe9e2,#fec5b1,#fe9e7b,#f5723f,#d35722,#9b411d,#56372c)}
+.lticks{position:relative;height:16px;font-size:11.5px;color:var(--ink-soft)}
+.lticks span{position:absolute;top:2px;transform:translateX(-50%);white-space:nowrap}
+.lticks span:first-child{transform:none}
+.lticks span:last-child{transform:translateX(-100%)}
+.lread{font-size:12.5px;color:var(--ink);margin-top:4px;min-height:1.2em}
+
+/* facade table */
+.facades{
+  position:fixed;top:calc(84px + env(safe-area-inset-top));right:12px;width:min(520px,calc(100vw - 24px));
+  max-height:max(160px,calc(var(--dock-top,100dvh) - 84px - 12px - env(safe-area-inset-top)));display:flex;flex-direction:column;
+  background:var(--panel);border:1px solid var(--rule);border-radius:var(--radius);
+}
+.facades[hidden]{display:none}
+.fhead{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 12px 6px}
+.fhead strong{display:block;font-size:13.5px;font-weight:600}
+.fsub{display:block;font-size:12px;color:var(--ink-soft)}
+.fhead .ghost{padding:2px 4px;font-size:14px}
+.fbody{overflow:auto;padding:0 12px}
+.fbody table{border-collapse:collapse;width:100%;font-size:12.5px;font-variant-numeric:tabular-nums}
+.fbody th,.fbody td{text-align:left;vertical-align:top;padding:6px 8px 6px 0;border-top:1px solid var(--rule)}
+.fbody thead th{border-top:none;font-size:12px;font-weight:500;color:var(--ink-soft);white-space:nowrap}
+.fbody tbody th span{display:block;font-weight:600}
+.fbody tbody th small,.fbody small{font-size:11px;color:var(--ink-soft);font-weight:400}
+.fbody tr.solid th span,.fbody tr.solid td{color:var(--ink-soft)}
+/* bass response panel: two line series, the reverberation dots, a table on request */
+.response .fbody h3{font-size:12px;font-weight:600;margin:10px 0 4px}
+.response .keys{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;margin-bottom:2px}
+.response .key i{display:inline-block;width:14px;height:2px;border-radius:1px;vertical-align:middle;margin-right:6px}
+.response .chart{position:relative}
+.response svg{display:block;width:100%;height:auto;font:11px Archivo,system-ui,sans-serif;overflow:visible}
+.response .grid line{stroke:#e3e6e0;stroke-width:1}
+.response .grid line.zero{stroke:#b9beb5}
+.response .grid text{fill:var(--ink-soft)}
+.response .series{fill:none;stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+.response .ring{stroke:var(--panel);stroke-width:2}
+.response text.note{fill:var(--ink);font-size:11px}
+.response text.value{fill:var(--ink);font-size:10.5px;font-variant-numeric:tabular-nums}
+.response .target{fill:#e6e8e3}
+.response .cross{stroke:var(--ink-soft);stroke-width:1}
+.response .hit{fill:transparent;cursor:crosshair}
+.response .tip{position:absolute;top:18px;display:flex;flex-direction:column;gap:2px;padding:6px 8px;background:#fff;border:1px solid var(--rule);border-radius:var(--radius);font-size:11.5px;font-variant-numeric:tabular-nums;pointer-events:none;white-space:nowrap}
+.response .tip[hidden]{display:none}
+.response .tip i{display:inline-block;width:10px;height:2px;vertical-align:middle;margin-right:5px}
+.response .pwhy{font-size:12px;color:var(--ink-soft);margin:0 0 2px}
+.response .numbers{margin:8px 0 10px;font-size:12px}
+.response .numbers summary{cursor:pointer;color:var(--ink-soft)}
+.response .numbers table{border-collapse:collapse;margin-top:6px;font-size:11.5px;font-variant-numeric:tabular-nums}
+.response .numbers th,.response .numbers td{padding:2px 12px 2px 0;border-top:1px solid var(--rule);text-align:left}
+.response .pempty{font-size:12.5px;color:var(--ink-soft);padding:8px 0 12px}
+
+/* sound treatment costs: one row per kind of piece, opening to its details */
+.parts .part{border-top:1px solid var(--rule)}
+.parts summary{display:grid;grid-template-columns:12px 1fr auto;align-items:baseline;gap:4px 8px;padding:7px 0;cursor:pointer;list-style:none;font-size:12.5px}
+.parts summary::-webkit-details-marker{display:none}
+.parts summary::before{content:'▸';color:var(--ink-soft);font-size:11px}
+.parts .part[open] summary::before{content:'▾'}
+.parts .pname{display:flex;flex-direction:column;min-width:0}
+.parts .pname b{font-weight:600}
+.parts .pname small{font-size:11px;color:var(--ink-soft)}
+.parts .pcost{white-space:nowrap;font-variant-numeric:tabular-nums;font-weight:500}
+.parts .pwhy{font-size:12px;color:var(--ink-soft);margin:0 0 4px 20px}
+.parts .pblock{margin:0 0 6px 20px}
+.parts .pblock h3{font-size:11.5px;font-weight:600;margin:6px 0 2px}
+.parts .pblock ul{margin:0;padding-left:16px;font-size:12px;line-height:1.45}
+.parts .ptotal{display:flex;justify-content:space-between;border-top:1px solid var(--ink-soft);padding:8px 0 10px;font-size:13px;font-variant-numeric:tabular-nums}
+.parts .pempty{font-size:12.5px;color:var(--ink-soft);padding:8px 0 12px}
+.spell + .spell{margin-top:4px}
+.spell div:first-child{white-space:nowrap}
+.spell .range{font-size:11px;color:var(--ink-soft)}
+.ffoot{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 12px 10px;border-top:1px solid var(--rule)}
+.ffoot span{font-size:11.5px;color:var(--ink-soft)}
+.ffoot button{font-size:12.5px;padding:5px 9px;white-space:nowrap}
+
+/* measure readout */
+.chip{
+  position:fixed;top:calc(84px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);
+  display:flex;align-items:center;gap:8px;max-width:calc(100vw - 24px);
+  background:rgba(28,37,48,.92);color:#F3F4F0;border-radius:var(--radius);padding:6px 8px 6px 12px;
+  font-size:13px;font-variant-numeric:tabular-nums;
+}
+.chip[hidden]{display:none}
+.chip span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chip button{font-size:12.5px;padding:4px 8px;background:#F3F4F0;border-color:transparent}
+.chip .ghost{background:transparent;color:#AAB4BF}
+
+/* short windows: tighten the dock before it has to scroll */
+@media (max-height:760px){
+  .dock{padding:9px 12px 10px}
+  .dock .body{margin-top:8px}
+  .slider + .slider{margin-top:5px}
+  .slider .cap{margin-bottom:0}
+  .row{margin-top:8px}
+  hr{margin-top:8px}
+  .note{margin-bottom:6px}
+}
+@media (max-height:560px) and (min-width:461px){
+  /* each slider on one line: caption and value beside the track, not above it */
+  .slider{display:grid;grid-template-columns:minmax(128px,36%) 1fr;align-items:center;column-gap:12px}
+  .slider .cap{margin:0}
+  .slider + .slider{margin-top:0}
+}
+@media (max-height:560px){
+  .plate p{display:none}
+  .sun span{display:none}
+  .plate{padding:6px 10px}
+  .dial{width:46px;height:46px}
+  .legend,.facades,.chip{top:calc(52px + env(safe-area-inset-top))}
+  .facades{max-height:max(140px,calc(var(--dock-top,100dvh) - 52px - 12px))}
+}
+
+@media (max-width:460px){
+  .orow{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .orow .oname{grid-column:1 / span 3;justify-self:start}
+  .orow .oremove{grid-column:4;grid-row:1;justify-self:end}
+  .tabs button{padding:5px 7px}
+  .dial{width:54px;height:54px}
+  .sun{gap:8px;padding-right:10px}
+  .sun span{white-space:normal;max-width:104px;line-height:1.25}
+}
+
+/* fingers, not cursors: controls at least 40px tall */
+@media (pointer:coarse){
+  .dock button,.sel button,.chip button,.ffoot button{min-height:40px}
+  .tabs button{min-height:36px}
+  input[type=range]{height:34px}
+  input[type=range]::-webkit-slider-thumb{width:24px;height:24px;margin-top:-11px}
+  input[type=range]::-moz-range-thumb{width:22px;height:22px}
+  .field input,.orow select{min-height:36px}
+}
+@media (max-width:460px){
+  .sun b{font-size:16px}
+  .plate h1{font-size:12.5px}
+}
+
+/* wide screens: the costs list is long, so it sits on the left, beside the dock rather than above
+   it, clear of the sun readout, and runs most of the window's height */
+@media (min-width:1180px){
+  .facades.parts{
+    left:12px;right:auto;width:min(460px,calc(50vw - 304px));
+    max-height:calc(100dvh - 84px - 12px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+  }
+}
+@media (min-width:1180px) and (max-height:560px){
+  .facades.parts{max-height:calc(100dvh - 52px - 12px - env(safe-area-inset-top) - env(safe-area-inset-bottom))}
+}
+
+/* rows that set their own display still have to disappear when hidden */
+.pick[hidden],.slider[hidden],.row[hidden]{display:none}
+
+/* the right-hand panels (facade table, bass response) start below the sun readout, not under it */
+@media (min-height:561px){
+  .facades:not(.parts){
+    top:calc(124px + env(safe-area-inset-top));
+    max-height:max(160px,calc(var(--dock-top,100dvh) - 124px - 12px - env(safe-area-inset-top)));
+  }
+}
+@media (min-width:1180px) and (min-height:561px){
+  /* beside the dock rather than above it, so they can run the window's height */
+  .facades:not(.parts){width:min(520px,calc(50vw - 304px));max-height:calc(100dvh - 124px - 12px - env(safe-area-inset-top) - env(safe-area-inset-bottom))}
+}

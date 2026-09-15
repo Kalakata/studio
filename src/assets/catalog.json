@@ -1,0 +1,220 @@
+{
+  "_convention": "Openable pieces (a curtain) have openParts, built instead of parts while the layout item says open: true. Canonical pose: width along x, depth along z, back face towards -z, origin on the floor at the centre of the footprint. Metres; angles in degrees. Parts: box [w,h,d] or cyl [rTop,rBottom,h,segments] or leaf [sx,sy,sz], placed at [x,y,z]. Every part receives shadows; shadow only says whether it casts one: both or cast (default for box and cyl), none (default for leaf). pallet [w, d] is a pallet built the EUR way (144 mm tall, deck on top), default mat pallet; rx/ry/rz stand it on an edge. Clash check: the body spans y0 (default 0) to h; things standing on it (monitors on the desk) are not counted. clash: false leaves a piece out entirely (a rug).",
+  "assets": [
+    { "id": "desk", "label": "Desk", "w": 2.90, "d": 0.72, "h": 0.7575, "parts": [
+      { "box": [2.90, 0.045, 0.72], "at": [0, 0.735, 0], "mat": "dark" },
+      { "box": [0.05, 0.71, 0.66], "at": [-1.40, 0.355, 0], "mat": "dark" },
+      { "box": [0.05, 0.71, 0.66], "at": [0, 0.355, 0], "mat": "dark" },
+      { "box": [0.05, 0.71, 0.66], "at": [1.40, 0.355, 0], "mat": "dark" },
+      { "box": [0.62, 0.36, 0.035], "at": [-0.70, 1.00, -0.22], "mat": "screen", "ry": 16.0428, "shadow": "none" },
+      { "box": [0.14, 0.17, 0.10], "at": [-0.70, 0.83, -0.22], "mat": "metal", "shadow": "none" },
+      { "box": [0.62, 0.36, 0.035], "at": [0, 1.00, -0.22], "mat": "screen", "shadow": "none" },
+      { "box": [0.14, 0.17, 0.10], "at": [0, 0.83, -0.22], "mat": "metal", "shadow": "none" },
+      { "box": [0.62, 0.36, 0.035], "at": [0.70, 1.00, -0.22], "mat": "screen", "ry": -16.0428, "shadow": "none" },
+      { "box": [0.14, 0.17, 0.10], "at": [0.70, 0.83, -0.22], "mat": "metal", "shadow": "none" },
+      { "box": [1.05, 0.025, 0.28], "at": [0, 0.775, 0.05], "mat": "dark", "shadow": "none" },
+      { "box": [0.21, 0.34, 0.24], "at": [-1.15, 0.93, -0.16], "mat": "dark" },
+      { "box": [0.21, 0.34, 0.24], "at": [1.15, 0.93, -0.16], "mat": "dark" }
+    ]},
+    { "id": "chair", "label": "Chair", "w": 0.62, "d": 0.62, "h": 1.16, "parts": [
+      { "cyl": [0.31, 0.31, 0.05, 14], "at": [0, 0.04, 0], "mat": "metal" },
+      { "cyl": [0.05, 0.05, 0.40, 8], "at": [0, 0.26, 0], "mat": "metal" },
+      { "box": [0.55, 0.10, 0.55], "at": [0, 0.48, 0], "mat": "dark" },
+      { "box": [0.52, 0.62, 0.09], "at": [0, 0.85, -0.26], "mat": "dark", "rx": -6.8755 }
+    ]},
+    { "id": "sofa", "label": "Sofa", "w": 2.40, "d": 0.95, "h": 0.86, "parts": [
+      { "box": [2.40, 0.40, 0.95], "at": [0, 0.20, 0], "mat": "sofa" },
+      { "box": [2.40, 0.56, 0.22], "at": [0, 0.58, -0.365], "mat": "sofa" },
+      { "box": [0.22, 0.34, 0.95], "at": [-1.09, 0.47, 0], "mat": "sofa" },
+      { "box": [0.22, 0.34, 0.95], "at": [1.09, 0.47, 0], "mat": "sofa" },
+      { "box": [0.46, 0.14, 0.60], "at": [-0.75, 0.47, -0.06], "mat": "sofa", "shadow": "none" },
+      { "box": [0.46, 0.14, 0.60], "at": [0, 0.47, -0.06], "mat": "sofa", "shadow": "none" },
+      { "box": [0.46, 0.14, 0.60], "at": [0.75, 0.47, -0.06], "mat": "sofa", "shadow": "none" }
+    ]},
+    { "id": "table", "label": "Coffee table", "w": 1.30, "d": 0.62, "h": 0.42, "parts": [
+      { "box": [1.30, 0.04, 0.62], "at": [0, 0.40, 0], "mat": "dark" },
+      { "box": [0.035, 0.40, 0.035], "at": [-0.60, 0.20, -0.26], "mat": "metal", "shadow": "none" },
+      { "box": [0.035, 0.40, 0.035], "at": [0.60, 0.20, -0.26], "mat": "metal", "shadow": "none" },
+      { "box": [0.035, 0.40, 0.035], "at": [-0.60, 0.20, 0.26], "mat": "metal", "shadow": "none" },
+      { "box": [0.035, 0.40, 0.035], "at": [0.60, 0.20, 0.26], "mat": "metal", "shadow": "none" }
+    ]},
+    { "id": "rug", "label": "Rug", "w": 3.40, "d": 2.30, "h": 0.012, "clash": false,
+      "acoustic": { "kind": "table", "material": "carpet-on-underlay", "floor": true },
+      "parts": [
+      { "box": [3.40, 0.012, 2.30], "at": [0, 0.006, 0], "mat": "rug", "shadow": "none" }
+    ]},
+    { "id": "shelf", "label": "Shelving", "w": 2.20, "d": 0.42, "h": 0.72, "parts": [
+      { "box": [2.20, 0.72, 0.42], "at": [0, 0.36, 0], "mat": "dark" },
+      { "box": [0.46, 0.09, 0.36], "at": [-0.55, 0.765, 0], "mat": "metal", "shadow": "none" }
+    ]},
+    { "id": "panel", "label": "Acoustic panel", "w": 0.60, "d": 0.07, "y0": 1.225, "h": 2.375,
+      "acoustic": { "kind": "porous", "thickness": 0.07, "face": [0.60, 1.15] },
+      "parts": [
+      { "box": [0.60, 1.15, 0.07], "at": [0, 1.80, 0.035], "mat": "foam" }
+    ]},
+    { "id": "reflection-panel", "label": "Reflection panel 0.6 × 1.2", "w": 0.60, "d": 0.10, "y0": 0.60, "h": 1.80,
+      "_source": "GIK 244-style 1200 x 600 x 100 mm mineral-wool panel hung upright on the wall, centred at 1.2 m so it takes a monitor's first reflection at seated ear height.",
+      "acoustic": { "kind": "porous", "thickness": 0.10, "face": [0.60, 1.20] },
+      "parts": [
+      { "box": [0.60, 1.20, 0.10], "at": [0, 1.20, 0], "mat": "foam" }
+    ]},
+    { "id": "gobo", "label": "Free-standing panels", "w": 1.26, "d": 0.20, "h": 1.82,
+      "_source": "Two 1200 x 600 x 100 mm panels side by side on a floor stand with splayed feet, for a first reflection that falls on a window where nothing can be hung. Moves away from the glass when not mixing.",
+      "acoustic": { "kind": "porous", "thickness": 0.10, "face": [1.20, 1.20], "faceY": 1.21 },
+      "parts": [
+      { "box": [0.60, 1.20, 0.10], "at": [-0.315, 1.21, 0], "mat": "foam" },
+      { "box": [0.60, 1.20, 0.10], "at": [0.315, 1.21, 0], "mat": "foam" },
+      { "box": [0.025, 1.80, 0.025], "at": [-0.6175, 0.91, 0], "mat": "metal" },
+      { "box": [0.025, 1.80, 0.025], "at": [0.6175, 0.91, 0], "mat": "metal" },
+      { "box": [0.04, 0.03, 0.20], "at": [-0.6175, 0.015, 0], "mat": "metal" },
+      { "box": [0.04, 0.03, 0.20], "at": [0.6175, 0.015, 0], "mat": "metal" }
+    ]},
+    { "id": "corner-trap", "label": "Corner bass trap", "w": 0.60, "d": 0.30, "h": 2.40,
+      "_source": "Two GIK Soffit-style traps (1200 x 600 x 300 mm mineral wool) stacked in a corner, floor to 2.4 m, leaving the ceiling panels clear. Corners are a pressure maximum for every mode.",
+      "acoustic": { "kind": "porous", "thickness": 0.30, "face": [0.60, 2.40] },
+      "parts": [
+      { "box": [0.60, 2.40, 0.30], "at": [0, 1.20, 0], "mat": "foam" }
+    ]},
+    { "id": "membrane-trap", "label": "Tuned bass trap, 45 Hz", "w": 0.90, "d": 0.24, "h": 2.80,
+      "_source": "Sealed membrane absorber tuned to the room's third length mode (3 x 343 / (2 x 11.4) = 45.1 Hz): 12 mm birch ply face (about 7.8 kg/m^2) over a 228 mm cavity, 50 mm mineral wool loose inside, 60 / sqrt(7.8 x 0.228) = 45 Hz. Floor to 2.8 m, under the ceiling panels, on a wall where that mode has its pressure maximum. Build the cavity adjustable and tune it by measurement.",
+      "acoustic": { "kind": "membrane", "mass": 7.8, "depth": 0.228, "peak": 0.8, "q": 2.5, "face": [0.88, 2.78] },
+      "parts": [
+      { "box": [0.90, 2.80, 0.228], "at": [0, 1.40, -0.006], "mat": "dark" },
+      { "box": [0.88, 2.78, 0.012], "at": [0, 1.40, 0.114], "mat": "pallet" }
+    ]},
+    { "id": "curtain", "label": "Curtain", "w": 1.50, "d": 0.14, "h": 2.86, "window": true,
+      "_source": "Heavy lined velour (about 600 g/m^2) gathered to double fullness on a ceiling track 120 mm in from the glass: 1.5 m wide so it laps a 1.2 m window by 150 mm each side, floor to 2.86 m under the ceiling panels. Open, it draws back into two 150 mm stacks over the piers and leaves the glass clear. Absorption: velour draped to half its area (Everest). window: true lets it hang in front of a window; openParts are what is built while it is open.",
+      "acoustic": { "kind": "table", "material": "curtain-heavy", "face": [1.50, 2.82], "faceY": 1.43, "openFace": [0.30, 2.82] },
+      "parts": [
+      { "box": [1.50, 0.03, 0.05], "at": [0, 2.845, -0.03], "mat": "metal", "shadow": "none" },
+      { "box": [1.44, 2.82, 0.02], "at": [0, 1.43, -0.03], "mat": "curtain" },
+      { "cyl": [0.047, 0.047, 2.82, 8], "at": [-0.7030, 1.43, 0.01], "mat": "curtain" },
+      { "cyl": [0.047, 0.047, 2.82, 8], "at": [-0.5021, 1.43, 0.01], "mat": "curtain" },
+      { "cyl": [0.047, 0.047, 2.82, 8], "at": [-0.3013, 1.43, 0.01], "mat": "curtain" },
+      { "cyl": [0.047, 0.047, 2.82, 8], "at": [-0.1004, 1.43, 0.01], "mat": "curtain" },
+      { "cyl": [0.047, 0.047, 2.82, 8], "at": [0.1004, 1.43, 0.01], "mat": "curtain" },
+      { "cyl": [0.047, 0.047, 2.82, 8], "at": [0.3013, 1.43, 0.01], "mat": "curtain" },
+      { "cyl": [0.047, 0.047, 2.82, 8], "at": [0.5021, 1.43, 0.01], "mat": "curtain" },
+      { "cyl": [0.047, 0.047, 2.82, 8], "at": [0.7030, 1.43, 0.01], "mat": "curtain" }
+    ],
+      "openParts": [
+      { "box": [1.50, 0.03, 0.05], "at": [0, 2.845, -0.03], "mat": "metal", "shadow": "none" },
+      { "cyl": [0.04, 0.04, 2.82, 8], "at": [-0.71, 1.43, 0.01], "mat": "curtain" },
+      { "cyl": [0.04, 0.04, 2.82, 8], "at": [-0.64, 1.43, 0.01], "mat": "curtain" },
+      { "cyl": [0.04, 0.04, 2.82, 8], "at": [0.64, 1.43, 0.01], "mat": "curtain" },
+      { "cyl": [0.04, 0.04, 2.82, 8], "at": [0.71, 1.43, 0.01], "mat": "curtain" }
+    ]},
+    { "id": "listener", "label": "Listening position", "w": 0.22, "d": 0.24, "h": 1.34, "clash": false,
+      "_source": "A head marking the best hearing spot, ears at 1.20 m (seated ear height, level with the tweeters), facing +z. It sits on the chair, so it is left out of the clash check.",
+      "parts": [
+      { "cyl": [0.045, 0.055, 0.14, 12], "at": [0, 1.06, -0.01], "mat": "head", "shadow": "none" },
+      { "leaf": [0.5, 0.62, 0.56], "at": [0, 1.22, 0], "mat": "head" },
+      { "leaf": [0.1, 0.2, 0.15], "at": [-0.09, 1.2, 0], "mat": "head" },
+      { "leaf": [0.1, 0.2, 0.15], "at": [0.09, 1.2, 0], "mat": "head" },
+      { "box": [0.03, 0.05, 0.04], "at": [0, 1.2, 0.1], "mat": "head", "shadow": "none" }
+    ]},
+    { "id": "plant", "label": "Plant", "w": 0.40, "d": 0.40, "h": 0.98, "parts": [
+      { "cyl": [0.17, 0.13, 0.30, 12], "at": [0, 0.15, 0], "mat": "pot" },
+      { "leaf": [1, 1.5, 1], "at": [-0.13, 0.44, -0.12], "mat": "leaf" },
+      { "leaf": [1, 1.5, 1], "at": [0, 0.53, 0.11], "mat": "leaf" },
+      { "leaf": [1, 1.5, 1], "at": [0.13, 0.62, -0.12], "mat": "leaf" },
+      { "leaf": [1, 1.5, 1], "at": [-0.13, 0.71, 0.11], "mat": "leaf" },
+      { "leaf": [1, 1.5, 1], "at": [0, 0.44, -0.12], "mat": "leaf" }
+    ]},
+    { "id": "amp", "label": "Amp", "w": 0.50, "d": 0.42, "h": 0.455, "parts": [
+      { "box": [0.50, 0.45, 0.42], "at": [0, 0.23, 0], "mat": "dark" },
+      { "box": [0.34, 0.26, 0.02], "at": [0, 0.26, 0.22], "mat": "foam", "shadow": "none" }
+    ]},
+    { "id": "pa", "label": "Speaker", "w": 0.36, "d": 0.34, "h": 1.00, "parts": [
+      { "box": [0.36, 1.00, 0.34], "at": [0, 0.50, 0], "mat": "dark" },
+      { "box": [0.26, 0.26, 0.02], "at": [0, 0.72, 0.17], "mat": "foam", "shadow": "none" }
+    ]},
+    { "id": "lamp", "label": "Floor lamp", "w": 0.42, "d": 0.42, "h": 1.55, "parts": [
+      { "cyl": [0.02, 0.02, 1.30, 8], "at": [0, 0.65, 0], "mat": "metal" },
+      { "cyl": [0.19, 0.21, 0.26, 14], "at": [0, 1.42, 0], "mat": "pot" },
+      { "box": [0.34, 0.03, 0.34], "at": [0, 0.015, 0], "mat": "metal", "shadow": "none" }
+    ]},
+    { "id": "stool", "label": "Stool", "w": 0.40, "d": 0.40, "h": 0.65, "parts": [
+      { "box": [0.40, 0.06, 0.40], "at": [0, 0.62, 0], "mat": "dark" },
+      { "box": [0.03, 0.60, 0.03], "at": [-0.15, 0.30, -0.15], "mat": "metal", "shadow": "none" },
+      { "box": [0.03, 0.60, 0.03], "at": [0.15, 0.30, -0.15], "mat": "metal", "shadow": "none" },
+      { "box": [0.03, 0.60, 0.03], "at": [-0.15, 0.30, 0.15], "mat": "metal", "shadow": "none" },
+      { "box": [0.03, 0.60, 0.03], "at": [0.15, 0.30, 0.15], "mat": "metal", "shadow": "none" }
+    ]},
+    { "id": "cabinet", "label": "Cabinet", "w": 0.90, "d": 0.45, "h": 1.85, "parts": [
+      { "box": [0.90, 1.85, 0.45], "at": [0, 0.925, 0], "mat": "dark" },
+      { "box": [0.02, 1.70, 0.02], "at": [0, 0.95, 0.235], "mat": "metal", "shadow": "none" }
+    ]},
+    { "id": "pallet-sofa", "label": "Pallet sofa", "w": 2.40, "d": 0.80, "h": 0.86, "parts": [
+      { "pallet": [1.20, 0.80], "at": [-0.60, 0, 0] },
+      { "pallet": [1.20, 0.80], "at": [0.60, 0, 0] },
+      { "pallet": [1.20, 0.80], "at": [-0.60, 0.144, 0] },
+      { "pallet": [1.20, 0.80], "at": [0.60, 0.144, 0] },
+      { "box": [2.40, 0.14, 0.80], "at": [0, 0.358, 0], "mat": "cushion" },
+      { "box": [0.76, 0.42, 0.16], "at": [-0.80, 0.64, -0.28], "mat": "cushion", "rx": -10 },
+      { "box": [0.76, 0.42, 0.16], "at": [0, 0.64, -0.28], "mat": "cushion", "rx": -10 },
+      { "box": [0.76, 0.42, 0.16], "at": [0.80, 0.64, -0.28], "mat": "cushion", "rx": -10 },
+      { "box": [0.42, 0.36, 0.14], "at": [0.45, 0.62, -0.17], "mat": "teal", "rx": -14, "shadow": "none" }
+    ]},
+    { "id": "pallet-table", "label": "Pallet coffee table", "w": 1.20, "d": 0.80, "h": 0.288, "parts": [
+      { "pallet": [1.20, 0.80], "at": [0, 0, 0] },
+      { "pallet": [1.20, 0.80], "at": [0, 0.144, 0] }
+    ]},
+    { "id": "pallet-shelf", "label": "Pallet shelving", "w": 1.20, "d": 0.288, "h": 0.80, "parts": [
+      { "pallet": [1.20, 0.80], "at": [0, 0.40, 0.144], "rx": -90 },
+      { "pallet": [1.20, 0.80], "at": [0, 0.40, -0.144], "rx": 90 }
+    ]},
+    { "id": "pallet-desk", "label": "Pallet desk", "w": 2.90, "d": 0.72, "h": 0.76, "parts": [
+      { "pallet": [0.80, 0.60], "at": [-1.05, 0, 0] },
+      { "pallet": [0.80, 0.60], "at": [-1.05, 0.144, 0] },
+      { "pallet": [0.80, 0.60], "at": [-1.05, 0.288, 0] },
+      { "pallet": [0.80, 0.60], "at": [-1.05, 0.432, 0] },
+      { "pallet": [0.80, 0.60], "at": [-1.05, 0.576, 0] },
+      { "pallet": [0.80, 0.60], "at": [1.05, 0, 0] },
+      { "pallet": [0.80, 0.60], "at": [1.05, 0.144, 0] },
+      { "pallet": [0.80, 0.60], "at": [1.05, 0.288, 0] },
+      { "pallet": [0.80, 0.60], "at": [1.05, 0.432, 0] },
+      { "pallet": [0.80, 0.60], "at": [1.05, 0.576, 0] },
+      { "box": [2.90, 0.04, 0.72], "at": [0, 0.74, 0], "mat": "pallet" },
+      { "box": [0.62, 0.36, 0.035], "at": [0, 1.00, -0.22], "mat": "screen", "shadow": "none" },
+      { "box": [0.14, 0.08, 0.10], "at": [0, 0.80, -0.22], "mat": "metal", "shadow": "none" },
+      { "box": [1.05, 0.025, 0.28], "at": [0, 0.7725, 0.05], "mat": "dark", "shadow": "none" }
+    ]},
+    { "id": "monitor-stand", "label": "Studio monitor on stand", "w": 0.30, "d": 0.31, "h": 1.269,
+      "_source": "Monitor: KRK Rokit 7 G4 cabinet 339 H x 225 W x 284 D mm; tweeter centre 265 mm up (estimated). Stand: Gravity SP 3202, triangular cast iron base 292.5 mm edge, 42 mm column, 250 x 250 mm tray, height 930-1500 mm; set to 930 mm so the tweeter is at 1.195 m, seated ear height.",
+      "parts": [
+      { "cyl": [0.169, 0.169, 0.025, 3], "at": [0, 0.0125, 0], "ry": 90, "mat": "metal" },
+      { "cyl": [0.021, 0.021, 0.88, 12], "at": [0, 0.465, 0], "mat": "metal" },
+      { "box": [0.25, 0.025, 0.25], "at": [0, 0.9175, 0], "mat": "metal" },
+      { "box": [0.225, 0.339, 0.284], "at": [0, 1.0995, 0], "mat": "dark" },
+      { "cyl": [0.085, 0.085, 0.01, 24], "at": [0, 1.05, 0.147], "rx": 90, "mat": "cone" },
+      { "cyl": [0.03, 0.03, 0.012, 16], "at": [0, 1.05, 0.149], "rx": 90, "mat": "dark", "shadow": "none" },
+      { "cyl": [0.03, 0.03, 0.01, 16], "at": [0, 1.195, 0.147], "rx": 90, "mat": "metal", "shadow": "none" },
+      { "box": [0.14, 0.018, 0.01], "at": [0, 0.96, 0.145], "mat": "foam", "shadow": "none" }
+    ]},
+    { "id": "cloud", "label": "Ceiling cloud 1.2 × 0.6", "w": 1.20, "d": 0.60, "mount": "ceiling", "drop": 0.20,
+      "_source": "GIK Acoustics 1200 x 600 mm panel, 100 mm thick, on cloud mounting brackets that hold a 100 mm (4 in) air gap below the ceiling. Parts with hang: true measure at[1] down from the ceiling.",
+      "parts": [
+      { "box": [1.20, 0.10, 0.60], "at": [0, 0.15, 0], "hang": true, "mat": "foam" },
+      { "cyl": [0.008, 0.008, 0.10, 6], "at": [-0.50, 0.05, -0.22], "hang": true, "mat": "metal", "shadow": "none" },
+      { "cyl": [0.008, 0.008, 0.10, 6], "at": [0.50, 0.05, -0.22], "hang": true, "mat": "metal", "shadow": "none" },
+      { "cyl": [0.008, 0.008, 0.10, 6], "at": [-0.50, 0.05, 0.22], "hang": true, "mat": "metal", "shadow": "none" },
+      { "cyl": [0.008, 0.008, 0.10, 6], "at": [0.50, 0.05, 0.22], "hang": true, "mat": "metal", "shadow": "none" }
+    ]},
+    { "id": "ceiling-panel", "label": "Ceiling panel, fitted", "w": 1.20, "d": 0.60, "mount": "ceiling", "drop": 0.20, "resizable": true,
+      "_source": "A panel cut to fit, 100 mm thick with a 100 mm air gap like the GIK cloud; width and depth come from each layout item. Built by build.js (panel plus four brackets), so parts is empty. Add tab: Cover the ceiling.",
+      "panel": { "thickness": 0.10, "gap": 0.10, "mat": "foam" },
+      "acoustic": { "kind": "porous", "thickness": 0.10, "gap": 0.10 },
+      "parts": []
+    },
+    { "id": "cloud-large", "label": "Ceiling cloud 2.4 × 1.2", "w": 2.40, "d": 1.20, "mount": "ceiling", "drop": 0.50,
+      "_source": "Four 1200 x 600 mm, 100 mm panels framed as one cloud and hung 400 mm down on wires, as the large panels in the reference photo.",
+      "parts": [
+      { "box": [2.40, 0.10, 1.20], "at": [0, 0.45, 0], "hang": true, "mat": "foam" },
+      { "cyl": [0.003, 0.003, 0.40, 6], "at": [-1.10, 0.20, -0.50], "hang": true, "mat": "metal", "shadow": "none" },
+      { "cyl": [0.003, 0.003, 0.40, 6], "at": [1.10, 0.20, -0.50], "hang": true, "mat": "metal", "shadow": "none" },
+      { "cyl": [0.003, 0.003, 0.40, 6], "at": [-1.10, 0.20, 0.50], "hang": true, "mat": "metal", "shadow": "none" },
+      { "cyl": [0.003, 0.003, 0.40, 6], "at": [1.10, 0.20, 0.50], "hang": true, "mat": "metal", "shadow": "none" }
+    ]}
+  ]
+}

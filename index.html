@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Studio shell — 11.4 × 3.95 × 3.1 m</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23f3f4f0'/%3E%3Ccircle cx='23' cy='9' r='4.5' fill='%23f5723f'/%3E%3Crect x='4.5' y='15.5' width='23' height='11' fill='none' stroke='%231c2530' stroke-width='2'/%3E%3Cpath d='M9 15.5v-3M14 15.5v-3M19 15.5v-3' stroke='%231c2530' stroke-width='2'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+<canvas id="view"></canvas>
+
+<div class="plate">
+  <h1>Studio shell</h1>
+  <p id="plate-dims"></p>
+  <p id="plate-site"></p>
+</div>
+
+<div class="problems" id="problems" role="alert" hidden></div>
+
+<div class="legend" id="sunmap-legend" hidden>
+  <div class="lhead">
+    <strong>Hours of direct sun</strong>
+    <button class="ghost" id="sunmap-close" aria-label="Close the sun-hours plan">✕</button>
+  </div>
+  <div class="lwhen" id="sunmap-when"></div>
+  <div class="lnote">Walls and windows only: furniture casts no shade here.</div>
+  <div class="lscale">
+    <span class="lnone"><i></i>no sun</span>
+    <div class="lramp">
+      <div class="lbar"></div>
+      <div class="lticks" id="sunmap-ticks"></div>
+    </div>
+  </div>
+  <div class="lread" id="sunmap-read" aria-live="polite"></div>
+</div>
+
+<div class="legend" id="sound-legend" hidden>
+  <div class="lhead">
+    <strong id="sound-legend-title">Bass</strong>
+    <button class="ghost" id="sound-legend-close" aria-label="Close the sound plan">✕</button>
+  </div>
+  <div class="lwhen" id="sound-legend-when"></div>
+  <div class="lnote" id="sound-legend-note"></div>
+  <div class="lscale">
+    <div class="lramp">
+      <div class="lbar" id="sound-legend-bar"></div>
+      <div class="lticks" id="sound-legend-ticks"></div>
+    </div>
+  </div>
+  <div class="lread" id="sound-legend-read" aria-live="polite"></div>
+</div>
+
+<div class="facades response" id="response-panel" hidden>
+  <div class="fhead">
+    <div>
+      <strong>Bass response at the listening position</strong>
+      <span class="fsub" id="response-sub"></span>
+    </div>
+    <button class="ghost" id="response-close" aria-label="Close the bass response">✕</button>
+  </div>
+  <div class="fbody" id="response-body"></div>
+  <div class="ffoot">
+    <span>From the room model: modes up to 400 Hz and the surfaces in room.json. Measure before you build.</span>
+  </div>
+</div>
+
+<div class="facades" id="facade-panel" hidden>
+  <div class="fhead">
+    <div>
+      <strong id="facade-title">Sun on each facade</strong>
+      <span class="fsub" id="facade-sub"></span>
+    </div>
+    <button class="ghost" id="facade-close" aria-label="Close the facade table">✕</button>
+  </div>
+  <div class="fbody" id="facade-body"></div>
+  <div class="ffoot">
+    <span id="facade-note">In sun while it is above the horizon and within 90° of the wall's bearing.</span>
+    <button id="facade-copy">Copy as Markdown</button>
+  </div>
+</div>
+
+<div class="facades parts" id="parts-panel" hidden>
+  <div class="fhead">
+    <div>
+      <strong>Sound treatment costs</strong>
+      <span class="fsub" id="parts-sub"></span>
+    </div>
+    <button class="ghost" id="parts-close" aria-label="Close the sound treatment costs">✕</button>
+  </div>
+  <div class="fbody" id="parts-body"></div>
+  <div class="ffoot">
+    <span id="parts-note">Bulgarian prices, September 2026. Sources in docs/sound-treatment.md.</span>
+    <button id="parts-copy">Copy as Markdown</button>
+  </div>
+</div>
+
+<div class="chip" id="measure-chip" hidden>
+  <span id="measure-text" aria-live="polite">Click the first point</span>
+  <button id="measure-clear">Clear</button>
+  <button class="ghost" id="measure-done">Done</button>
+</div>
+
+<div class="sun">
+  <svg class="dial" id="sun-dial" viewBox="-38 -38 76 76" aria-hidden="true">
+    <circle class="sky" r="32"/>
+    <circle class="alt45" r="16"/>
+    <line class="tick" x1="0" y1="-32" x2="0" y2="-36"/>
+    <text class="north" x="0" y="-25">N</text>
+    <polyline class="path" id="dial-path" points=""/>
+    <g id="dial-room"></g>
+    <circle class="dot" id="dial-sun" r="3.4"/>
+  </svg>
+  <div class="read">
+    <b id="sun-time">12:00</b>
+    <span id="sun-pos"></span>
+  </div>
+</div>
+
+<div class="sel" id="sel" hidden>
+  <strong id="sel-name">Desk</strong>
+  <button id="sel-open" hidden>Open</button>
+  <button id="sel-lock" aria-pressed="true">Unlock</button>
+  <button id="sel-rot">Rotate</button>
+  <button id="sel-dup">Duplicate</button>
+  <button id="sel-del">Remove</button>
+  <button class="ghost" id="sel-done">Done</button>
+</div>
+
+<div class="dock" id="dock">
+  <div class="head">
+    <div class="tabs">
+      <button data-tab="sun" aria-pressed="true">Sun</button>
+      <button data-tab="add" aria-pressed="false">Add</button>
+      <button data-tab="sound" aria-pressed="false">Sound</button>
+      <button data-tab="view" aria-pressed="false">View</button>
+      <button data-tab="layouts" aria-pressed="false">Layouts</button>
+      <button data-tab="shell" aria-pressed="false">Shell</button>
+    </div>
+    <button class="ghost" id="dock-toggle" aria-expanded="true">Hide</button>
+  </div>
+
+  <div class="body">
+    <section data-pane="sun">
+      <div class="slider">
+        <div class="cap"><span>Time of day</span><b id="lab-time">12:00</b></div>
+        <input id="in-time" type="range" min="0" max="1435" step="5" value="720" aria-label="Time of day">
+      </div>
+      <div class="slider">
+        <div class="cap"><span>Date</span><b id="lab-date">21 June</b></div>
+        <input id="in-date" type="range" min="1" max="365" step="1" value="172" aria-label="Date">
+      </div>
+      <div class="slider">
+        <div class="cap"><span>Street windows face</span><b id="lab-face">45° NE</b></div>
+        <input id="in-face" type="range" min="0" max="359" step="1" value="45" aria-label="Compass bearing of the two street windows">
+      </div>
+      <div class="row">
+        <button class="toggle" id="act-sunmap" aria-pressed="false">Sun-hours plan</button>
+        <button class="toggle" id="act-facades" aria-pressed="false">Facade table</button>
+      </div>
+    </section>
+
+    <section data-pane="add" hidden>
+      <p class="note">Tap a piece to drop it in the middle of the room, then drag it where you want it. Tap anything in the room to select it again.</p>
+      <div class="row" id="palette"></div>
+      <hr>
+      <div class="row">
+        <button id="act-undo" title="Undo (Ctrl+Z)" disabled>Undo</button>
+        <button id="act-redo" title="Redo (Ctrl+Shift+Z)" disabled>Redo</button>
+        <button id="act-cover">Cover the ceiling</button>
+        <button id="act-reset">Reset layout</button>
+        <button id="act-clear">Empty the room</button>
+      </div>
+      <p class="note clash" id="clash-list" aria-live="polite"></p>
+    </section>
+
+    <section data-pane="sound" hidden>
+      <p class="note">What the monitors do in this room, from the acoustics model. It all follows the layout as you change it.</p>
+      <div class="row">
+        <span class="label" id="snd-treat-label">Treatment</span>
+        <span class="choice" role="group" aria-labelledby="snd-treat-label">
+          <button data-treatment="with" aria-pressed="true">With</button>
+          <button data-treatment="without" aria-pressed="false">Without</button>
+        </span>
+      </div>
+      <div class="row">
+        <button class="toggle" id="act-rays" aria-pressed="false">Reflection paths</button>
+        <button class="toggle" id="act-response" aria-pressed="false">Bass response</button>
+        <button class="toggle" id="act-parts" aria-pressed="false">Sound treatment costs</button>
+      </div>
+      <p class="note" id="snd-rays-note" aria-live="polite"></p>
+      <hr>
+      <div class="row">
+        <span class="label" id="snd-map-label">Plan</span>
+        <span class="choice" role="group" aria-labelledby="snd-map-label">
+          <button data-soundmap="even" aria-pressed="false">Bass evenness</button>
+          <button data-soundmap="level" aria-pressed="false">One frequency</button>
+          <button data-soundmap="mode" aria-pressed="false">Standing wave</button>
+        </span>
+      </div>
+      <div class="slider" id="snd-freq-row" hidden>
+        <div class="cap"><span>Frequency</span><b id="snd-freq-lab">45 Hz</b></div>
+        <input id="snd-freq" type="range" min="40" max="200" step="1" value="45" aria-label="Frequency shown on the plan">
+      </div>
+      <div class="pick" id="snd-mode-row" hidden>
+        <select id="snd-mode" aria-label="Room mode shown on the plan"></select>
+      </div>
+    </section>
+
+    <section data-pane="view" hidden>
+      <div class="row">
+        <button data-view="iso" aria-pressed="true">Corner</button>
+        <button data-view="plan" aria-pressed="false">Plan</button>
+        <button data-view="long" aria-pressed="false">Long wall</button>
+        <button data-view="end" aria-pressed="false">Street wall</button>
+        <button data-view="inside" aria-pressed="false">Stand inside</button>
+      </div>
+      <hr>
+      <div class="row">
+        <button data-toggle="furniture" aria-pressed="true">Fit-out</button>
+        <button data-toggle="lights" aria-pressed="true">Tubes</button>
+        <button data-toggle="grid" aria-pressed="false">Grid</button>
+        <button data-toggle="dims" aria-pressed="true">Dimensions</button>
+        <button data-toggle="ceiling" aria-pressed="false">Ceiling</button>
+        <button data-toggle="cutaway" aria-pressed="true">Cut away near walls</button>
+        <button data-toggle="clashes" aria-pressed="true">Clashes</button>
+      </div>
+      <hr>
+      <div class="row">
+        <button class="toggle" id="act-measure" aria-pressed="false">Measure</button>
+      </div>
+      <hr>
+      <div class="row">
+        <span class="label" id="quality-label">Quality</span>
+        <span class="choice" role="group" aria-labelledby="quality-label">
+          <button data-quality="full" aria-pressed="false">Full</button>
+          <button data-quality="fast" aria-pressed="false">Fast</button>
+        </span>
+      </div>
+    </section>
+
+    <section data-pane="layouts" hidden>
+      <div class="pick">
+        <select id="lay-pick" aria-label="Layout"></select>
+        <span id="lay-state" class="state" aria-live="polite"></span>
+      </div>
+      <div class="row">
+        <button id="lay-save">Save</button>
+        <button id="lay-saveas">Save as…</button>
+        <button id="lay-rename">Rename</button>
+        <button id="lay-delete">Delete</button>
+      </div>
+      <hr>
+      <div class="row">
+        <button id="lay-export">Export JSON</button>
+        <button id="lay-import">Import JSON</button>
+        <input id="lay-file" type="file" accept="application/json,.json" hidden>
+      </div>
+    </section>
+
+    <section data-pane="shell" hidden>
+      <div class="pick">
+        <select id="shell-wall" aria-label="Wall"></select>
+        <span id="shell-state" class="state" aria-live="polite"></span>
+      </div>
+      <div class="list" id="shell-openings"></div>
+      <div class="row">
+        <button id="shell-add-window">Add window</button>
+        <button id="shell-add-door">Add door</button>
+        <button id="shell-add-partition">Add partition</button>
+      </div>
+      <div class="list" id="shell-partitions"></div>
+      <hr>
+      <div class="row">
+        <button id="shell-undo" disabled>Undo</button>
+        <button id="shell-redo" disabled>Redo</button>
+        <button id="shell-save" disabled>Save room.json</button>
+        <button id="shell-revert" disabled>Revert</button>
+      </div>
+      <p class="note tip">Drag an opening along its wall, or type exact values in metres.</p>
+    </section>
+  </div>
+</div>
+
+<script type="module" src="/src/main.js"></script>
+</body>
+</html>

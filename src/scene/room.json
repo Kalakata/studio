@@ -1,0 +1,72 @@
+{
+  "_about": "The room as measured. Metres; bearings in degrees from north. CLAUDE.md is the authority and test/room.test.js checks this file against it. Opening 'left' is the distance from the wall's left-hand corner, as seen standing inside the room facing that wall, to the opening's near edge. Openings are type 'window' or 'door'; a door has sill 0 and swing 'left' or 'right' (hinge side seen from inside) and opens into the room. Partitions run from [x, z] to [x, z] along their centreline, in scene metres.",
+  "site": { "name": "Burgas", "lat": 42.50, "lon": 27.46, "streetBearing": 45 },
+  "clear": { "length": 11.4, "width": 3.95, "height": 3.1 },
+  "wallThickness": 0.12,
+  "walls": [
+    {
+      "id": "street",
+      "side": "+x",
+      "finish": "plaster",
+      "openings": [
+        { "type": "window", "left": 0.517, "width": 1.2, "sill": 0.9, "head": 2.85 },
+        { "type": "window", "left": 2.233, "width": 1.2, "sill": 0.9, "head": 2.85 }
+      ]
+    },
+    { "id": "back", "side": "-x", "finish": "plaster", "openings": [] },
+    {
+      "id": "long",
+      "side": "-z",
+      "finish": "plaster",
+      "openings": [
+        { "type": "window", "left": 0.9, "width": 1.2, "sill": 0.9, "head": 2.85 },
+        { "type": "window", "left": 3, "width": 1.2, "sill": 0.9, "head": 2.85 },
+        { "type": "window", "left": 5.1, "width": 1.2, "sill": 0.9, "head": 2.85 },
+        { "type": "window", "left": 7.2, "width": 1.2, "sill": 0.9, "head": 2.85 },
+        { "type": "window", "left": 9.3, "width": 1.2, "sill": 0.9, "head": 2.85 }
+      ]
+    },
+    { "id": "mural", "side": "+z", "finish": "mural", "openings": [] }
+  ],
+  "partitions": [],
+  "acoustics": {
+    "_about": "Surface materials for the bass model (src/analysis/roomAcoustics.js, MATERIALS). From the owner: a poured concrete building (plastered concrete walls), modern double-glazed windows, a tiled floor. Assumed: plaster on the concrete slab above. furnishing is extra absorption in m^2 Sabine for what the model leaves out: the door, gaps, cables, people; it is the one figure npm run mix still varies.",
+    "walls": "plaster-on-concrete",
+    "windows": "double-glazing",
+    "floor": "ceramic-tiles",
+    "ceiling": "plaster-on-concrete",
+    "furnishing": 2
+  },
+  "windowFrame": {
+    "bar": 0.055,
+    "depth": 0.09,
+    "sill": { "overhang": 0.06, "height": 0.04, "projection": 0.09 }
+  },
+  "lighting": {
+    "battens": {
+      "housing": [1.6, 0.09, 0.14],
+      "housingBelowCeiling": 0.05,
+      "tube": [1.48, 0.03, 0.09],
+      "tubeBelowCeiling": 0.105,
+      "at": [
+        [-4.3, -0.95],
+        [-2, -0.95],
+        [0.3, -0.95],
+        [2.6, -0.95],
+        [-4.3, 0.95],
+        [-2, 0.95],
+        [0.3, 0.95],
+        [2.6, 0.95]
+      ]
+    },
+    "strips": [
+      { "size": [0.04, 2.45, 0.05], "at": [5.61, 1.35, -1.875] },
+      { "size": [0.04, 2.45, 0.05], "at": [5.61, 1.35, 1.875] },
+      { "size": [7.4, 0.05, 0.04], "at": [-1.2, 0.055, -1.915] }
+    ],
+    "lamps": [
+      { "at": [-2.6, 0], "belowCeiling": 0.3, "colour": "#46dff0", "intensity": 1.05, "range": 11 },
+      { "at": [2.6, 0], "belowCeiling": 0.3, "colour": "#46dff0", "intensity": 1.05, "range": 11 }
+    ]
+  }
+}
