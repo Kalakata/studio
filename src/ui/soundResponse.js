@@ -107,7 +107,6 @@ export function createResponsePanel(app) {
     const root = svg('svg', { viewBox: `0 0 ${Wd} ${Ht}`, role: 'img', 'aria-label': `Reverberation time with the treatment, ${r.rt.map((b) => `${hz(b.f)} ${b.treated.toFixed(2)} s`).join(', ')}; target ${r.target.toFixed(2)} s` });
     const grid = svg('g', { class: 'grid' }, root);
     svg('rect', { x: m.l, width: Wd - m.l - m.r, y: fy(r.target + 0.05), height: fy(r.target - 0.05) - fy(r.target + 0.05), class: 'target' }, root);
-    svg('text', { x: Wd - m.r - 4, y: fy(r.target + 0.05) - 4, 'text-anchor': 'end', class: 'note' }, root).textContent = `target ${r.target.toFixed(2)} s ± 0.05 (200 Hz–4 kHz)`;
     for (let v = 0; v <= ymax + 1e-9; v += 0.2) {
       svg('line', { x1: m.l, x2: Wd - m.r, y1: fy(v), y2: fy(v) }, grid);
       svg('text', { x: m.l - 6, y: fy(v) + 3.5, 'text-anchor': 'end' }, grid).textContent = v === 0 ? '0 s' : v.toFixed(1);
@@ -168,7 +167,7 @@ export function createResponsePanel(app) {
       el('h3', null, 'Bass at the ears, 40–250 Hz, against its own average'),
       keys, bassChart(r),
       el('h3', null, 'Reverberation time with the treatment'),
-      el('p', 'pwhy', `The bare room rings for ${Math.min(...bareRt).toFixed(1)}–${Math.max(...bareRt).toFixed(1)} s from 250 Hz up.`),
+      el('p', 'pwhy', `The shaded band is the target, ${r.target.toFixed(2)} s ± 0.05 (EBU Tech 3276, 200 Hz–4 kHz). The bare room rings for ${Math.min(...bareRt).toFixed(1)}–${Math.max(...bareRt).toFixed(1)} s from 250 Hz up.`),
       rtChart(r),
       table(r)
     );
