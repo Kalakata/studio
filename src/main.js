@@ -167,14 +167,19 @@ app.shellEdit = createShellEdit({
 function freeFrame() {
   const h = window.innerHeight;
   const dock = document.getElementById('dock').getBoundingClientRect();
-  let top = 0;
+  let top = 0, bottom = dock.top - 8;
+  // on a narrow screen the title plate and the sun readout span the top: start below them
+  if (window.innerWidth <= 700) {
+    for (const sel of ['.plate', '.sun']) top = Math.max(top, document.querySelector(sel).getBoundingClientRect().bottom + 6);
+  }
   for (const id of ['sunmap-legend', 'sound-legend']) {
     const legend = document.getElementById(id);
-    if (legend.hidden) continue;
+    if (legend.hidden || getComputedStyle(legend).display === 'none') continue;
     const r = legend.getBoundingClientRect();
-    if (r.top < h / 2) top = r.bottom + 8;
+    if (r.top < h / 2) top = Math.max(top, r.bottom + 8);     // at the top (wider screens)
+    else bottom = Math.min(bottom, r.top - 8);                 // just above the dock (phones)
   }
-  return { top, bottom: dock.top - 8 };
+  return { top, bottom };
 }
 app.orbit = createOrbit(camera, canvas, invalidate, freeFrame);
 app.measure = createMeasure({

@@ -201,6 +201,7 @@ export function installSound(app, { overlay, canvas, camera, furniture, state, i
     $('snd-freq-row').hidden = kind !== 'level';
     $('snd-mode-row').hidden = kind !== 'mode';
     legend.hidden = !kind;
+    app.dock.autoFold('plan:sound', !!kind);
     views.plan.visible = !!kind;
     app.picking.select(null);
     if (kind === 'mode') fillModes();

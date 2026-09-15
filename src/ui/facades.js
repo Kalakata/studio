@@ -82,6 +82,7 @@ export function createFacadePanel(app) {
   function setOpen(open) {
     if (open) { app.parts?.setOpen(false); app.response?.setOpen(false); }   // they share the same place on screen
     panel.hidden = !open;
+    app.dock?.autoFold('panel:facades', open);
     button.setAttribute('aria-pressed', String(open));
     refresh();
   }

@@ -44,6 +44,7 @@ export function installSunPlan(app, { overlay, canvas, camera, room, furniture, 
     app.picking.select(null);
     app.selectOpening(null);
     app.dock.setSunMapLegend({ on });              // first: the framing measures around it
+    app.dock.autoFold('plan:sun', on);
     app.orbit.setView(on ? 'sunplan' : app.dock.activeView(), false);
     if (on) app.refreshSunMap(30);
     invalidate();

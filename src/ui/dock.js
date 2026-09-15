@@ -173,12 +173,45 @@ export function createDock(app) {
     el.classList.toggle('ok', !list.length);
   }
 
-  dockBtn.addEventListener('click', () => {
-    const closed = dock.classList.toggle('closed');
+  // ---- folding the dock
+  let foldedForYou = false;                  // folded by autoFold, not by the Hide button
+  function setClosed(closed) {
+    dock.classList.toggle('closed', closed);
     dockBtn.textContent = closed ? 'Show' : 'Hide';
     dockBtn.setAttribute('aria-expanded', String(!closed));
     parkBar();
     app.orbit.reframe(false);
+  }
+  dockBtn.addEventListener('click', () => {
+    foldedForYou = false;
+    setClosed(!dock.classList.contains('closed'));
+  });
+
+  // On a phone the open dock covers half the screen. While a plan or an information panel is up it
+  // folds out of the way, and it comes back when the last of them closes, unless you opened or folded
+  // it yourself in between. reason: 'plan:…' or 'panel:…'.
+  const phone = window.matchMedia('(max-width: 700px)');
+  const showing = new Set();
+  function autoFold(reason, on) {
+    if (on) showing.add(reason); else showing.delete(reason);
+    document.body.classList.toggle('sheet-open', [...showing].some((r) => r.startsWith('panel:')));
+    if (!phone.matches) return;
+    if (on && !dock.classList.contains('closed')) { foldedForYou = true; setClosed(true); }
+    else if (!showing.size && foldedForYou) { foldedForYou = false; setClosed(false); }
+  }
+
+  // legends: Less folds the explanation away and leaves the title, the scale and the reading; it never
+  // leaves the plan (Exit plan does). Phones start folded.
+  document.querySelectorAll('.legend .lfold').forEach((b) => {
+    const legend = b.closest('.legend');
+    const set = (compact) => {
+      legend.classList.toggle('compact', compact);
+      b.textContent = compact ? 'More' : 'Less';
+      b.setAttribute('aria-expanded', String(!compact));
+      app.orbit.reframe(false);
+    };
+    set(phone.matches);
+    b.addEventListener('click', () => set(!legend.classList.contains('compact')));
   });
 
   // ---- the sun instrument
@@ -229,7 +262,7 @@ export function createDock(app) {
   }
 
   return {
-    showSelection, parkBar, syncInputs, setQuality, setMeasure, setClashes, setSunMapLegend, setSunMapHover,
+    showSelection, parkBar, autoFold, syncInputs, setQuality, setMeasure, setClashes, setSunMapLegend, setSunMapHover,
     setSunReadout(s) {
       $('sun-time').textContent = clock(state.minutes);
       $('sun-pos').textContent = s.alt < 0

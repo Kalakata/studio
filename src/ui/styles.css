@@ -354,3 +354,16 @@ button:disabled:hover{border-color:var(--rule)}
   /* beside the dock rather than above it, so they can run the window's height */
   .facades:not(.parts){width:min(520px,calc(50vw - 304px));max-height:calc(100dvh - 124px - 12px - env(safe-area-inset-top) - env(safe-area-inset-bottom))}
 }
+
+/* legend header: Less / More folds the explanation away, Exit plan leaves */
+.lbtns{display:flex;align-items:center;gap:2px;flex-shrink:0}
+.lhead .lbtns .ghost{padding:2px 6px;font-size:12.5px}
+.legend.compact .lwhen,.legend.compact .lnote{display:none}
+
+/* phones: the legend sits just above the dock instead of over the top of the view, the dock's
+   settings scroll within a third of the screen, and an information panel hides the legend */
+@media (max-width:700px){
+  .legend{top:auto;bottom:calc(100dvh - var(--dock-top,100dvh) + 8px);left:12px;right:12px;width:auto;transform:none}
+  .dock .body{max-height:38dvh}
+  .sheet-open .legend{display:none}
+}

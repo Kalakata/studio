@@ -46,14 +46,21 @@ export function createOrbit(camera, canvas, invalidate, getFrame) {
     return Math.max((h / 2) / Math.tan(vHalf), (w / 2) / Math.tan(hHalf)) * margin;
   }
 
+  // Views from above. On a tall, narrow screen (a phone held upright) the room turns so its length
+  // runs up the screen instead of across it, which fits it at twice the size.
+  function fromAbove(w, h, phi, margin) {
+    const upright = camera.aspect < 0.8;
+    return { theta: upright ? -Math.PI / 2 : 0, phi, radius: upright ? fitRadius(h, w, margin) : fitRadius(w, h, margin), target: new THREE.Vector3() };
+  }
+
   function presetGoal(name) {
     const t = new THREE.Vector3();
     switch (name) {
-      case 'plan':   return { theta: 0, phi: 0.06, radius: fitRadius(L, W, 1.18), target: t.set(0, 0, 0) };
+      case 'plan':   return fromAbove(L, W, 0.06, 1.18);
       // the sun-hours plan: floor plus the walls unfolded around it, and their labels
-      case 'sunplan': return { theta: 0, phi: 0.02, radius: fitRadius(L + 2 * (T + H + 0.9), W + 2 * (T + H + 0.9), 1.32), target: t.set(0, 0, 0) };
-      // the sound plans: the floor and the plate just around it
-      case 'soundplan': return { theta: 0, phi: 0.02, radius: fitRadius(L + 1.6, W + 1.6, 1.12), target: t.set(0, 0, 0) };
+      case 'sunplan': return fromAbove(L + 2 * (T + H + 0.9), W + 2 * (T + H + 0.9), 0.02, 1.32);
+      // the sound plans: the floor and the edge just around it
+      case 'soundplan': return fromAbove(L + 1.6, W + 1.6, 0.02, 1.12);
       case 'long':   return { theta: 0, phi: Math.PI / 2, radius: fitRadius(L, H, 1.15), target: t.set(0, H / 2, 0) };
       case 'end':    return { theta: -Math.PI / 2, phi: Math.PI / 2, radius: fitRadius(W, H, 1.3), target: t.set(0, H / 2, 0) };
       case 'inside': return { theta: -Math.PI / 2, phi: Math.PI / 2, radius: L - 0.8, target: t.set(L / 2, 1.5, 0) };
