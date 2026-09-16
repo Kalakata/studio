@@ -1,12 +1,17 @@
 import * as THREE from 'three';
 import { roomLit } from './roomlit.js';
+import { L, W, T } from './spec.js';
+import { tileTexture, TILE_ALBEDO } from './tiles.js';
 
 // Colour management is on: hex values are sRGB and converted to linear for lighting.
 const lit = (params) => roomLit(new THREE.MeshStandardMaterial(params));
 
 // shell
-export const matWall  = lit({ color: 0xf0eee9, roughness: 0.95, side: THREE.DoubleSide });
-export const matFloor = lit({ color: 0xc4c3bd, roughness: 1 });
+export const matWall  = lit({ color: 0x008080, roughness: 0.95, side: THREE.DoubleSide });
+// terracotta-brown ceramic tiles, glossy; the colour lives in the texture, so the reflectance is stored
+export const matFloor = lit({ color: 0xffffff, roughness: 0.32 });
+matFloor.userData.albedo = TILE_ALBEDO;
+if (typeof document !== 'undefined') matFloor.map = tileTexture({ floorLength: L + 2 * T, floorWidth: W + 2 * T });
 export const matCeil  = lit({ color: 0xf6f5f2, roughness: 1, side: THREE.DoubleSide });
 export const matGlass = lit({
   color: 0xcfe0ea, roughness: 0.08, transparent: true, opacity: 0.24,
@@ -49,4 +54,4 @@ export const FIT = {
   head:    lit({ color: 0xe8dcc8, roughness: 0.8 })
 };
 
-export const albedoOf = (m) => 0.2126 * m.color.r + 0.7152 * m.color.g + 0.0722 * m.color.b;
+export const albedoOf = (m) => m.userData.albedo ?? 0.2126 * m.color.r + 0.7152 * m.color.g + 0.0722 * m.color.b;

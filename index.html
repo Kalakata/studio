@@ -59,6 +59,39 @@
   <div class="lread" id="sound-legend-read" aria-live="polite"></div>
 </div>
 
+<div class="legend" id="light-legend" hidden>
+  <div class="lhead">
+    <strong id="light-legend-title">Light</strong>
+    <span class="lbtns">
+      <button class="ghost lfold" aria-expanded="true">Less</button>
+      <button class="ghost" id="light-legend-close">Exit plan</button>
+    </span>
+  </div>
+  <div class="lwhen" id="light-legend-when"></div>
+  <div class="lnote" id="light-legend-note"></div>
+  <div class="lscale">
+    <div class="lramp">
+      <div class="lbar" id="light-legend-bar"></div>
+      <div class="lticks" id="light-legend-ticks"></div>
+    </div>
+  </div>
+  <div class="lread" id="light-legend-read" aria-live="polite"></div>
+</div>
+
+<div class="facades compare" id="compare-panel" hidden>
+  <div class="fhead">
+    <div>
+      <strong>LED profile layouts</strong>
+      <span class="fsub">Light from the profiles alone, in the bare room</span>
+    </div>
+    <button class="ghost" id="compare-close" aria-label="Close the layout comparison">✕</button>
+  </div>
+  <div class="fbody" id="compare-body"></div>
+  <div class="ffoot">
+    <span>Targets (EN 12464-1): desk 500 lx, room 300 lx, evenness 0.4; below target in red. Click a row to switch to it.</span>
+  </div>
+</div>
+
 <div class="facades response" id="response-panel" hidden>
   <div class="fhead">
     <div>
@@ -103,6 +136,13 @@
   </div>
 </div>
 
+<div class="chip" id="photoreal-chip" hidden>
+  <span id="photoreal-text" aria-live="polite">Rendering</span>
+  <button id="photoreal-inside" hidden>Stand inside</button>
+  <button id="photoreal-save">Save image</button>
+  <button class="ghost" id="photoreal-done">Done</button>
+</div>
+
 <div class="chip" id="measure-chip" hidden>
   <span id="measure-text" aria-live="polite">Click the first point</span>
   <button id="measure-clear">Clear</button>
@@ -138,7 +178,7 @@
 <div class="dock" id="dock">
   <div class="head">
     <div class="tabs">
-      <button data-tab="sun" aria-pressed="true">Sun</button>
+      <button data-tab="sun" aria-pressed="true">Light</button>
       <button data-tab="add" aria-pressed="false">Add</button>
       <button data-tab="sound" aria-pressed="false">Sound</button>
       <button data-tab="view" aria-pressed="false">View</button>
@@ -165,6 +205,23 @@
       <div class="row">
         <button class="toggle" id="act-sunmap" aria-pressed="false">Sun-hours plan</button>
         <button class="toggle" id="act-facades" aria-pressed="false">Facade table</button>
+      </div>
+      <hr>
+      <div class="pick">
+        <span class="label" id="led-label">LED profiles</span>
+        <select id="led-pick" aria-labelledby="led-label"></select>
+      </div>
+      <div class="pick led-colour">
+        <span class="label" id="led-colour-label">Colour</span>
+        <select id="led-colour" aria-labelledby="led-colour-label"></select>
+        <input type="color" id="led-custom" value="#ff4f9a" aria-label="Custom LED colour" hidden>
+      </div>
+      <p class="note" id="led-note"></p>
+      <p class="note" id="led-figures" aria-live="polite"></p>
+      <div class="row">
+        <button class="toggle" id="act-night" aria-pressed="false">At night</button>
+        <button class="toggle" id="act-luxplan" aria-pressed="false">Lux plan</button>
+        <button class="toggle" id="act-compare" aria-pressed="false">Compare layouts</button>
       </div>
     </section>
 
@@ -236,6 +293,7 @@
       <hr>
       <div class="row">
         <button class="toggle" id="act-measure" aria-pressed="false">Measure</button>
+        <button class="toggle" id="act-photoreal" aria-pressed="false">Photoreal</button>
       </div>
       <hr>
       <div class="row">

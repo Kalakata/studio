@@ -1,0 +1,187 @@
+{
+  "_about": "LED profile layouts to compare, all straight runs parallel to the walls. kind 'corner' layouts sit in the room's corners so walls and ceiling stay free for acoustic panels; kind 'free' layouts place profiles anywhere. A corner run follows one of the twelve edges of the room's box: 'ceiling <wall>' and 'floor <wall>' where that wall meets the ceiling or floor, 'corner <end>-<side>' for the four vertical corners. from and to are metres along the edge (default: its whole length): along the long walls from the back wall, along the end walls from the window wall, up the corners from the floor. Every profile is a 45 degree corner profile aimed diagonally into the room. defaults apply to every run unless it says otherwise. A free run gives start and end points [x, y, z] in scene metres (room centre, floor at 0), aim (the direction its diffuser faces, across the run) and a label for the figures.",
+  "defaults": {"lmPerMetre": 1500, "cct": 4000, "wPerMetre": 15, "diffuser": 0.016},
+  "variants": [
+    {
+      "id": "ring",
+      "kind": "corner",
+      "name": "Ceiling ring",
+      "note": "All four wall–ceiling edges: one continuous rectangle of light.",
+      "runs": [
+        {"edge": "ceiling back"},
+        {"edge": "ceiling street"},
+        {"edge": "ceiling window"},
+        {"edge": "ceiling mural"}
+      ]
+    },
+    {
+      "id": "coves",
+      "kind": "corner",
+      "name": "Long coves",
+      "note": "The two long wall–ceiling edges: two parallel lines, open at the ends.",
+      "runs": [
+        {"edge": "ceiling window"},
+        {"edge": "ceiling mural"}
+      ]
+    },
+    {
+      "id": "ends",
+      "kind": "corner",
+      "name": "Lit end walls",
+      "note": "Both vertical corners and the ceiling edge at each end wall: a glowing upside-down U on the back wall and on the street wall.",
+      "runs": [
+        {"edge": "corner back-window"},
+        {"edge": "ceiling back"},
+        {"edge": "corner back-mural"},
+        {"edge": "corner street-window"},
+        {"edge": "ceiling street"},
+        {"edge": "corner street-mural"}
+      ]
+    },
+    {
+      "id": "floating",
+      "kind": "corner",
+      "name": "Floating room",
+      "note": "Both long walls at the ceiling edge and at the floor edge: four parallel lines, so the room seems to hover.",
+      "runs": [
+        {"edge": "ceiling window"},
+        {"edge": "ceiling mural"},
+        {"edge": "floor window"},
+        {"edge": "floor mural"}
+      ]
+    },
+    {
+      "id": "desk",
+      "kind": "corner",
+      "name": "Around the desk",
+      "note": "An L around the mix corner: the ceiling edges over the mural wall and the back wall, and the corner where they meet. The window wall and street end stay dark.",
+      "runs": [
+        {"edge": "ceiling mural"},
+        {"edge": "ceiling back"},
+        {"edge": "corner back-mural"}
+      ]
+    },
+    {
+      "id": "skirting",
+      "kind": "corner",
+      "name": "Skirting glow",
+      "note": "All four floor edges, washing light up the walls.",
+      "runs": [
+        {"edge": "floor back"},
+        {"edge": "floor street"},
+        {"edge": "floor window"},
+        {"edge": "floor mural"}
+      ]
+    },
+    {
+      "id": "opposite",
+      "kind": "corner",
+      "name": "Opposite corners",
+      "note": "The ceiling edge over the window wall and the floor edge along the mural wall: two lines in diagonally opposite corners.",
+      "runs": [
+        {"edge": "ceiling window"},
+        {"edge": "floor mural"}
+      ]
+    },
+    {
+      "id": "columns",
+      "kind": "corner",
+      "name": "Four columns",
+      "note": "The four vertical corners only.",
+      "runs": [
+        {"edge": "corner back-window"},
+        {"edge": "corner back-mural"},
+        {"edge": "corner street-window"},
+        {"edge": "corner street-mural"}
+      ]
+    },
+    {
+      "id": "zones",
+      "kind": "corner",
+      "name": "Work end, lounge end",
+      "note": "Ceiling edges around the mix end, floor edges around the street end: bright above where you work, low where you relax.",
+      "runs": [
+        {"edge": "ceiling back"},
+        {"edge": "ceiling window", "from": 0, "to": 5.7},
+        {"edge": "ceiling mural", "from": 0, "to": 5.7},
+        {"edge": "floor street"},
+        {"edge": "floor window", "from": 5.7, "to": 11.4},
+        {"edge": "floor mural", "from": 5.7, "to": 11.4}
+      ]
+    },
+    {
+      "id": "wireframe",
+      "kind": "corner",
+      "name": "Every edge",
+      "note": "All twelve edges of the room: the room drawn as a lit wireframe, the brightest option to compare against.",
+      "runs": [
+        {"edge": "ceiling back"},
+        {"edge": "ceiling street"},
+        {"edge": "ceiling window"},
+        {"edge": "ceiling mural"},
+        {"edge": "floor back"},
+        {"edge": "floor street"},
+        {"edge": "floor window"},
+        {"edge": "floor mural"},
+        {"edge": "corner back-window"},
+        {"edge": "corner back-mural"},
+        {"edge": "corner street-window"},
+        {"edge": "corner street-mural"}
+      ]
+    },
+    {
+      "id": "inset",
+      "kind": "free",
+      "name": "Inset ceiling lines",
+      "note": "Two lines on the ceiling, lengthwise, 60 cm in from each long wall, shining down.",
+      "runs": [
+        {"label": "ceiling line by the window wall", "start": [-5.5, 3.09, -1.375], "end": [5.5, 3.09, -1.375], "aim": [0, -1, 0]},
+        {"label": "ceiling line by the mural wall", "start": [-5.5, 3.09, 1.375], "end": [5.5, 3.09, 1.375], "aim": [0, -1, 0]}
+      ]
+    },
+    {
+      "id": "pendant",
+      "kind": "free",
+      "name": "Pendant over the desk",
+      "note": "A suspended profile 1 m above the desk, running across it, and two ceiling lines down the middle of the room.",
+      "runs": [
+        {"label": "pendant over the desk", "start": [-2.13, 1.76, -1.2], "end": [-2.13, 1.76, 1.2], "aim": [0, -1, 0]},
+        {"label": "centre ceiling line, window side", "start": [-2.55, 3.09, -0.5], "end": [2.55, 3.09, -0.5], "aim": [0, -1, 0]},
+        {"label": "centre ceiling line, mural side", "start": [-2.55, 3.09, 0.5], "end": [2.55, 3.09, 0.5], "aim": [0, -1, 0]}
+      ]
+    },
+    {
+      "id": "grazers",
+      "kind": "free",
+      "name": "Wall grazers",
+      "note": "A line along each long wall shining up the wall and onto the ceiling: at 2.4 m on the mural wall, and at 2.95 m above the window heads on the window wall.",
+      "runs": [
+        {"label": "grazer on the mural wall", "start": [-5.5, 2.4, 1.925], "end": [5.5, 2.4, 1.925], "aim": [0, 1, 0]},
+        {"label": "grazer above the windows", "start": [-5.5, 2.95, -1.925], "end": [5.5, 2.95, -1.925], "aim": [0, 1, 0]}
+      ]
+    },
+    {
+      "id": "cross",
+      "kind": "free",
+      "name": "Cross rhythm",
+      "note": "Five short lines across the ceiling, each in line with a long-wall window, leaving the gaps between for panels.",
+      "runs": [
+        {"label": "cross line 1", "start": [-4.2, 3.09, -1.5], "end": [-4.2, 3.09, 1.5], "aim": [0, -1, 0]},
+        {"label": "cross line 2", "start": [-2.1, 3.09, -1.5], "end": [-2.1, 3.09, 1.5], "aim": [0, -1, 0]},
+        {"label": "cross line 3", "start": [0, 3.09, -1.5], "end": [0, 3.09, 1.5], "aim": [0, -1, 0]},
+        {"label": "cross line 4", "start": [2.1, 3.09, -1.5], "end": [2.1, 3.09, 1.5], "aim": [0, -1, 0]},
+        {"label": "cross line 5", "start": [4.2, 3.09, -1.5], "end": [4.2, 3.09, 1.5], "aim": [0, -1, 0]}
+      ]
+    },
+    {
+      "id": "spine",
+      "kind": "free",
+      "name": "Centre spine",
+      "note": "One line down the middle of the ceiling, and a line behind the desk at shelf height washing the back wall.",
+      "runs": [
+        {"label": "centre spine", "start": [-5.6, 3.09, 0], "end": [5.6, 3.09, 0], "aim": [0, -1, 0]},
+        {"label": "wash on the back wall", "start": [-5.4, 1.1, -1.775], "end": [-5.4, 1.1, 1.775], "aim": [-0.7071, 0.7071, 0]}
+      ]
+    }
+  ]
+}

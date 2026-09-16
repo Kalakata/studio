@@ -191,6 +191,6 @@ export function applySun(rig, sky, scene, s, face) {
 // read brighter than dusk, and night darker still, the way an eye adapts rather than a meter.
 // The constant is set for looking into the cut-away room, not at the street: at midday the
 // interior gets a few percent of outdoor light, and keyed to the exterior it reads black.
-export function exposureFor(clear) {
-  return Math.min(12, 3.8 * Math.pow(clear.ghi + 0.004, -0.75));
+export function exposureFor(clear, cap = 12) {
+  return Math.min(cap, 3.8 * Math.pow(clear.ghi + 0.004, -0.75));
 }

@@ -187,5 +187,12 @@ box live in a separate overlay scene drawn after tone mapping, so they keep thei
    ceiling and rugs to get there.
    The 45 Hz membrane traps are tuned to the third length mode, which depends only on the
    measured 11.40 m.
-7. **Layouts live in one browser.** Named layouts are in `localStorage`; moving them between
+7. **LED profile light is estimated, not traced.** `src/analysis/lighting.js` treats each corner
+   profile as a line of Lambertian diffusers aimed 45° into the room, adds a uniform split-flux bounce,
+   and ignores furniture and acoustic panels in the light's way. The lux figures (work plane 0.75 m,
+   desk, evenness, against EN 12464-1) are for white LEDs at the lumens in
+   `src/assets/lighting-variants.json`; a custom colour changes only the look. The displayed white is
+   pulled towards neutral as the eye adapts, and exposure may open to 32 with profiles on so the room
+   reads at night.
+8. **Layouts live in one browser.** Named layouts are in `localStorage`; moving them between
    devices means exporting and importing the JSON file.

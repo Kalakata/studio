@@ -174,7 +174,7 @@ export function createResponsePanel(app) {
   }
 
   function setOpen(open) {
-    if (open) app.facades?.setOpen(false);    // they share the same place on screen
+    if (open) { app.facades?.setOpen(false); app.light?.setCompare(false); }   // they share the same place on screen
     panel.hidden = !open;
     app.dock?.autoFold('panel:response', open);
     button.setAttribute('aria-pressed', String(open));

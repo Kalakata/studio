@@ -25,9 +25,7 @@ export function installSound(app, { overlay, canvas, camera, furniture, state, i
   app.response = createResponsePanel(app);
 
   // ---- with or without the treatment
-  function showTreatment() {
-    for (const g of furniture.items) if (ASSETS[g.userData.type]?.acoustic) g.visible = !state.soundBare;
-  }
+  const showTreatment = () => app.showPieces();
   function setBare(on) {
     if (on === state.soundBare) return;
     state.soundBare = on;
@@ -196,6 +194,7 @@ export function installSound(app, { overlay, canvas, camera, furniture, state, i
     if (kind === state.soundmap) return;
     const was = state.soundmap;
     if (kind && state.sunmap) app.setSunMap(false);        // one plan at a time
+    if (kind) app.light?.setPlan(false);
     state.soundmap = kind;
     document.querySelectorAll('[data-soundmap]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.soundmap === kind)));
     $('snd-freq-row').hidden = kind !== 'level';

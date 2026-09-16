@@ -36,7 +36,7 @@ export function installSunPlan(app, { overlay, canvas, camera, room, furniture, 
 
   app.setSunMap = (on) => {
     if (on === state.sunmap) return;
-    if (on) app.sound?.setMap(null);              // one plan at a time
+    if (on) { app.sound?.setMap(null); app.light?.setPlan(false); }   // one plan at a time
     state.sunmap = on;
     app.sunMap.group.visible = on;
     room.dims.visible = room.swings.visible = !on && show.dims;

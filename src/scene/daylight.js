@@ -21,6 +21,7 @@ export function createDaylight(scene, { albedo }) {
   let walls = glazedWalls(ROOM);
   let reflect = roomReflectance(ROOM, albedo);
   let sources = [], merged = false;
+  let daylightBounce = [0, 0, 0], extraBounce = [0, 0, 0];
 
   // the openings changed: re-derive the windows and rebuild their lights
   function refresh() {
@@ -91,8 +92,18 @@ export function createDaylight(scene, { albedo }) {
       s.light.intensity = 1;
     }
 
-    roomUniforms.uBounce.value.setRGB(...splitFlux(phiSun, phiSky, reflect));
+    daylightBounce = splitFlux(phiSun, phiSky, reflect);
+    applyBounce();
   }
 
-  return { group, rebuild, refresh, update };
+  // the uniform bounce term is the daylight's plus whatever electric light adds (the LED profiles)
+  function applyBounce() {
+    roomUniforms.uBounce.value.setRGB(...daylightBounce.map((v, k) => v + extraBounce[k]));
+  }
+  function setExtraBounce(rgb) {
+    extraBounce = rgb;
+    applyBounce();
+  }
+
+  return { group, rebuild, refresh, update, setExtraBounce };
 }

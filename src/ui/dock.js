@@ -105,7 +105,7 @@ export function createDock(app) {
     const r = app.room;
     if (k === 'grid') r.grid.visible = on;
     if (k === 'furniture') { r.stuff.visible = on; if (!on) app.picking.select(null); app.updateClashes(); }
-    if (k === 'lights') r.leds.visible = on;
+    if (k === 'lights') r.leds.visible = on && !state.led;
     if (k === 'dims') { r.dims.visible = on; r.swings.visible = on; }
     if (k === 'clashes') app.updateClashes();
     app.invalidate(true);

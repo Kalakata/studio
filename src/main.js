@@ -23,6 +23,8 @@ import { createShellPanel } from './ui/shell.js';
 import { createFacadePanel } from './ui/facades.js';
 import { createPartsPanel } from './ui/soundParts.js';
 import { installSound } from './app/sound.js';
+import { installLight, LED_EXPOSURE_CAP } from './app/light.js';
+import { installPhotoreal } from './app/photoreal.js';
 import { installShell } from './app/shell.js';
 import { installClashes } from './app/clashes.js';
 import { installSunPlan } from './app/sunPlan.js';
@@ -64,8 +66,9 @@ const camera = new THREE.PerspectiveCamera(45, 1, 0.2, 1400);
 
 // ---- render on demand ------------------------------------------------------
 let frame = 0;
+let sceneChanged = () => {};                      // set once the photoreal render is installed
 function invalidate(shadows) {
-  if (shadows) renderer.shadowMap.needsUpdate = true;
+  if (shadows) { renderer.shadowMap.needsUpdate = true; sceneChanged(); }
   if (!frame) frame = requestAnimationFrame(tick);
 }
 
@@ -85,6 +88,7 @@ const furniture = createFurniture(room.stuff, () => {
   app.sunMapFurniture?.();
   app.parts?.refresh();
   app.sound?.refresh();
+  app.light?.refresh();
 });
 
 const knownTypes = new Set(Object.keys(ASSETS));
@@ -92,11 +96,19 @@ const knownTypes = new Set(Object.keys(ASSETS));
 const defaultItems = [...parseLayout(mixRoom, knownTypes).items, ...coverCeiling(ROOM)];
 
 const app = { state, show, room, furniture, defaultItems, invalidate };
+// which pieces show: acoustic ones step aside while comparing without the treatment, ceiling-hung
+// ones while an LED profile layout is on
+app.showPieces = () => {
+  for (const g of furniture.items) {
+    const a = ASSETS[g.userData.type];
+    g.visible = !(state.soundBare && a?.acoustic) && !(state.led && a?.mount === 'ceiling');
+  }
+};
 
 // ---- modes: Measure takes clicks, the sun-hours plan is read-only, the Shell tab edits
 // openings, otherwise the pointer moves furniture
 let activeTab = 'sun';
-app.mode = () => (app.measure?.active ? 'measure' : state.sunmap || state.soundmap || state.soundBare ? 'sunmap' : activeTab === 'shell' ? 'shell' : 'layout');
+app.mode = () => (app.measure?.active ? 'measure' : state.sunmap || state.soundmap || state.luxmap || state.soundBare || state.photoreal ? 'sunmap' : activeTab === 'shell' ? 'shell' : 'layout');
 app.onTab = (tab) => {
   activeTab = tab;
   app.sound?.onTab(tab);
@@ -122,7 +134,7 @@ app.updateSun = () => {
   lastSun = applySun(rig, sky, scene, s, state.face);
   relight();
   sky.updateEnvironment();
-  baseExposure = exposureFor(lastSun.clear);
+  baseExposure = exposureFor(lastSun.clear, Infinity);      // capped per frame: higher with LED profiles on
   room.north.rotation.y = (90 - state.face) * Math.PI / 180;
   app.dock.setSunReadout(s);
   invalidate(true);
@@ -172,7 +184,7 @@ function freeFrame() {
   if (window.innerWidth <= 700) {
     for (const sel of ['.plate', '.sun']) top = Math.max(top, document.querySelector(sel).getBoundingClientRect().bottom + 6);
   }
-  for (const id of ['sunmap-legend', 'sound-legend']) {
+  for (const id of ['sunmap-legend', 'sound-legend', 'light-legend']) {
     const legend = document.getElementById(id);
     if (legend.hidden || getComputedStyle(legend).display === 'none') continue;
     const r = legend.getBoundingClientRect();
@@ -215,6 +227,9 @@ installSunPlan(app, { overlay, canvas, camera, room, furniture, state, show, inv
 app.facades = createFacadePanel(app);
 app.parts = createPartsPanel(app);
 app.sound = installSound(app, { overlay, canvas, camera, furniture, state, invalidate });
+app.light = installLight(app, { scene, overlay, canvas, camera, furniture, daylight, state, invalidate });
+app.photoreal = installPhotoreal(app, { renderer, scene, camera, sky, daylight, state, invalidate, canvas });
+sceneChanged = app.photoreal.sceneChanged;
 installKeys(app);
 
 // ---- frame -------------------------------------------------------------------
@@ -235,12 +250,19 @@ function tick() {
   const inside = Math.abs(p.x) < L / 2 && Math.abs(p.z) < W / 2 && p.y > 0 && p.y < H;
 
   // dimension lines, the north arrow and door sweeps annotate the plan: not while standing in the room
-  const planView = state.sunmap || state.soundmap;
+  const planView = state.sunmap || state.soundmap || state.luxmap;
   room.dims.visible = room.swings.visible = show.dims && !inside && !planView;
   room.north.visible = !inside && !planView;
-  const exposure = Math.min(12, baseExposure * (inside ? INSIDE_ADAPT : 1));
+  const exposure = Math.min(state.led ? LED_EXPOSURE_CAP : 12, baseExposure * (inside ? INSIDE_ADAPT : 1));
   renderer.toneMappingExposure = exposure;
   toneAnnotations(exposure);
+
+  // photoreal: the path tracer draws the frame, sample by sample, until it has enough
+  if (app.photoreal?.active) {
+    app.photoreal.render(moving);
+    if (app.photoreal.needsFrame() && !frame) frame = requestAnimationFrame(tick);
+    return;
+  }
 
   if (post.enabled) post.render();
   else renderer.render(scene, camera);
@@ -261,6 +283,7 @@ function resize() {
   camera.updateProjectionMatrix();
   app.dock.parkBar();
   app.orbit.reframe(true);
+  sceneChanged();
   invalidate();
 }
 window.addEventListener('resize', resize);
