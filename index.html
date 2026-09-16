@@ -278,7 +278,7 @@
         <button data-view="plan" aria-pressed="false">Plan</button>
         <button data-view="long" aria-pressed="false">Long wall</button>
         <button data-view="end" aria-pressed="false">Street wall</button>
-        <button data-view="inside" aria-pressed="false">Stand inside</button>
+        <button data-view="inside" aria-pressed="false" title="Walk with W A S D or the arrow keys (Shift to go faster); right-click to look around with the mouse, right-click or Esc to let go">Stand inside</button>
       </div>
       <hr>
       <div class="row">
@@ -289,6 +289,14 @@
         <button data-toggle="ceiling" aria-pressed="false">Ceiling</button>
         <button data-toggle="cutaway" aria-pressed="true">Cut away near walls</button>
         <button data-toggle="clashes" aria-pressed="true">Clashes</button>
+      </div>
+      <hr>
+      <div class="row finishes">
+        <label for="finish-wall">Walls</label>
+        <input type="color" id="finish-wall" value="#008080">
+        <label for="finish-ceiling">Ceiling</label>
+        <input type="color" id="finish-ceiling" value="#f6f5f2">
+        <button id="finish-reset" title="Teal walls and a white ceiling">Reset colours</button>
       </div>
       <hr>
       <div class="row">

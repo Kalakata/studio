@@ -52,7 +52,7 @@ export function installLight(app, { scene, overlay, canvas, camera, furniture, d
     state.led = id || null;
     pick.value = id || '';
     app.room.leds.visible = !state.led && app.show.lights;          // the battens, strips and pendants
-    app.showPieces();                                               // ceiling panels step aside
+    app.showPieces();                                               // the room shows empty
     app.picking.select(null);
     colourPick.disabled = custom.disabled = !state.led;
     refresh(0);
@@ -72,7 +72,8 @@ export function installLight(app, { scene, overlay, canvas, camera, furniture, d
       `room ${round(report.room.avg)} lx (${TARGETS.room}), evenness ${report.room.uniformity.toFixed(2)} (${TARGETS.uniformity}).`,
       g ? (g.inView.length ? `In your view at the desk: ${names(g.inView)}.` : 'Nothing in your view at the desk.') : '',
       g && g.inScreen.length ? `Reflects in the screen: ${names(g.inScreen)}.` : '',
-      state.ledColour.hex ? 'Coloured light: the lux figures are for white LEDs of the same output.' : ''
+      state.ledColour.hex ? 'Coloured light: the lux figures are for white LEDs of the same output.' : '',
+      'The room shows empty; the desk and glare figures are taken where the desk and chair stand in the layout.'
     ];
     $('led-figures').textContent = parts.filter(Boolean).join(' ');
   }
@@ -85,7 +86,7 @@ export function installLight(app, { scene, overlay, canvas, camera, furniture, d
         rig.clear();
         daylight.setExtraBounce([0, 0, 0]);
       } else {
-        report = variantReport(app.getRoom(), byId[state.led], data.defaults, items(), ASSETS);
+        report = variantReport(app.getRoom(), byId[state.led], data.defaults, items(), ASSETS, app.albedo);
         const colour = chosenColour();
         rig.set(report.runs, colour);
         // the light bounced round the room, as irradiance in the scene's units, in the LEDs' colour
@@ -131,11 +132,11 @@ export function installLight(app, { scene, overlay, canvas, camera, furniture, d
       return;
     }
     const top = Math.max(100, Math.ceil(report.map.max / 100) * 100);
-    plan.setPlan(report.map, { colour: (v, c) => rampAt(LUX_RAMP, v / top, c), items: items(), assets: ASSETS });
+    plan.setPlan(report.map, { colour: (v, c) => rampAt(LUX_RAMP, v / top, c) });   // the empty room: no furniture outlines
     setLegend({
       title: `${report.name}: light on the work plane`,
       when: `Room ${round(report.room.avg)} lx on average, darkest ${round(report.room.min)} lx${report.desk !== null ? `; desk ${round(report.desk)} lx` : ''}`,
-      note: '0.75 m above the floor, from the profiles alone; furniture and panels are left out. Darker is more light.',
+      note: '0.75 m above the floor in the empty room, from the profiles alone. Darker is more light.',
       top
     });
     invalidate();
@@ -165,11 +166,11 @@ export function installLight(app, { scene, overlay, canvas, camera, furniture, d
 
   // ---- comparing every layout
   function drawCompare() {
-    const its = items(), key = JSON.stringify(its);
+    const its = items(), key = JSON.stringify([its, app.albedo]);
     const body = $('compare-body');
     if (key !== compareKey) {
       compareKey = key;
-      const reports = data.variants.map((v) => variantReport(app.getRoom(), v, data.defaults, its, ASSETS));
+      const reports = data.variants.map((v) => variantReport(app.getRoom(), v, data.defaults, its, ASSETS, app.albedo));
       const table = document.createElement('table');
       const head = table.insertRow();
       for (const h of ['Layout', 'Length', 'Power', 'Desk', 'Room', 'Evenness', 'Glare']) {

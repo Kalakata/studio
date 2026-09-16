@@ -1,9 +1,10 @@
 import * as THREE from 'three';
-import { WebGLPathTracer } from 'three-gpu-pathtracer';
+import { WebGLPathTracer, DenoiseMaterial } from 'three-gpu-pathtracer';
+import { FullScreenQuad } from 'three/addons/postprocessing/Pass.js';
 import { L, W, H } from '../scene/spec.js';
 
 const $ = (id) => document.getElementById(id);
-export const TARGET_SAMPLES = 400;
+export const TARGET_SAMPLES = 150;             // with the denoise pass, a clean image well before this
 
 // Photoreal: path-trace the view from inside the room, where every wall and the ceiling are really
 // there. The path tracer takes the real materials, the sun and a sky image, and the lights in the room
@@ -110,12 +111,38 @@ export function installPhotoreal(app, { renderer, scene, camera, sky, daylight, 
     }
     if (!tracer) {
       tracer = new WebGLPathTracer(renderer);
-      tracer.bounces = 6;
-      tracer.transmissiveBounces = 3;
+      // Speed: a room of dark teal walls sends little light past a fourth bounce; glossy tiles spark
+      // less with their shine filtered on later bounces; dragging the view shows a quarter-resolution
+      // preview until it settles. The lights are sampled directly at every bounce already (next-event
+      // estimation), which is what knowing where they are buys.
+      tracer.bounces = 4;
+      tracer.transmissiveBounces = 2;
+      tracer.filterGlossyFactor = 0.5;
+      tracer.dynamicLowRes = true;
+      tracer.lowResScale = 0.25;
       tracer.tiles.set(2, 2);
       tracer.renderDelay = 0;
       tracer.minSamples = 1;
       tracer.fadeDuration = 0;
+      // draw through an edge-preserving denoise, strong while there are few samples, easing off as the
+      // image converges so the finished render stays sharp
+      const denoise = new FullScreenQuad(new DenoiseMaterial({
+        map: null, transparent: true, blending: THREE.NoBlending,
+        premultipliedAlpha: renderer.getContextAttributes().premultipliedAlpha
+      }));
+      tracer.renderToCanvasCallback = (target, r, quad) => {
+        const m = denoise.material, n = Math.max(1, tracer.samples);
+        m.uniforms.map.value = target.texture;
+        m.uniforms.sigma.value = Math.min(5, Math.max(1.5, 16 / Math.sqrt(n)));
+        m.uniforms.threshold.value = 0.12;
+        m.uniforms.kSigma.value = 1.5;
+        m.uniforms.opacity.value = quad.material.opacity;
+        m.blending = quad.material.blending;
+        const auto = r.autoClear;
+        r.autoClear = false;
+        denoise.render(r);
+        r.autoClear = auto;
+      };
     }
     if (dirty) {
       useTracedScene(true);

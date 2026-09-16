@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { L, W, H, T } from '../scene/spec.js';
+import { walkAction, walkStep, lookStep } from './walk.js';
 
 const D2R = Math.PI / 180;
 const EASE = 0.14;
@@ -63,7 +64,9 @@ export function createOrbit(camera, canvas, invalidate, getFrame) {
       case 'soundplan': return fromAbove(L + 1.6, W + 1.6, 0.02, 1.12);
       case 'long':   return { theta: 0, phi: Math.PI / 2, radius: fitRadius(L, H, 1.15), target: t.set(0, H / 2, 0) };
       case 'end':    return { theta: -Math.PI / 2, phi: Math.PI / 2, radius: fitRadius(W, H, 1.3), target: t.set(0, H / 2, 0) };
-      case 'inside': return { theta: -Math.PI / 2, phi: Math.PI / 2, radius: L - 0.8, target: t.set(L / 2, 1.5, 0) };
+      // standing at the back looking down the room; the orbit point is 1 m ahead, so dragging turns
+      // the head in place and W A S D walk
+      case 'inside': return { theta: -Math.PI / 2, phi: Math.PI / 2, radius: 1, target: t.set(-L / 2 + 1.8, 1.5, 0) };
       default:       return { theta: -0.78, phi: 1.04, radius: fitRadius(L * 0.86, H * 1.9, 1.2), target: t.set(0, H * 0.45, 0) };
     }
   }
@@ -103,6 +106,56 @@ export function createOrbit(camera, canvas, invalidate, getFrame) {
   controls.addEventListener('start', () => { goal = null; state.autoFit = false; invalidate(); });
   controls.addEventListener('change', () => invalidate());
 
+  // walking: W A S D or the arrows while the camera is inside the room; text fields and Ctrl/Cmd
+  // shortcuts keep their keys
+  const held = new Set();
+  let run = false, lastStep = 0;
+  const inside = () => Math.abs(camera.position.x) < L / 2 && Math.abs(camera.position.z) < W / 2 && camera.position.y > 0 && camera.position.y < H;
+  window.addEventListener('keydown', (e) => {
+    if (e.target.closest?.('input, select, textarea') || e.ctrlKey || e.metaKey || e.altKey) return;
+    const action = walkAction(e.key);
+    if (!action || !inside()) return;
+    e.preventDefault();
+    held.add(action);
+    run = e.shiftKey;
+    goal = null;
+    state.autoFit = false;
+    invalidate();
+  });
+  window.addEventListener('keyup', (e) => {
+    const action = walkAction(e.key);
+    if (action) held.delete(action);
+    run = e.shiftKey;
+  });
+  window.addEventListener('blur', () => held.clear());
+
+  // looking with the mouse inside: right-click hides the pointer and the mouse turns the head; right-click
+  // again or Esc gives it back. While it is held, clicks do not reach the furniture, and a right drag
+  // does not pan.
+  let looked = false;
+  const looking = () => document.pointerLockElement === canvas;
+  window.addEventListener('pointerdown', (e) => {
+    if (looking()) {
+      e.preventDefault(); e.stopPropagation();
+      if (e.button === 2) document.exitPointerLock();
+      return;
+    }
+    if (e.button !== 2 || e.target !== canvas || !inside()) return;
+    e.preventDefault(); e.stopPropagation();
+    goal = null;
+    state.autoFit = false;
+    canvas.requestPointerLock?.()?.catch?.(() => {});
+  }, true);
+  window.addEventListener('pointerup', (e) => { if (looking()) e.stopPropagation(); }, true);
+  window.addEventListener('click', (e) => { if (looking()) { e.preventDefault(); e.stopPropagation(); } }, true);
+  document.addEventListener('mousemove', (e) => {
+    if (!looking() || !inside()) return;
+    lookStep(camera.position, controls.target, e.movementX, e.movementY);
+    camera.lookAt(controls.target);
+    looked = true;
+    invalidate();
+  });
+
   // advance one frame; returns true while the camera is still moving
   function update() {
     let moving = false;
@@ -124,6 +177,17 @@ export function createOrbit(camera, canvas, invalidate, getFrame) {
         moving = true;
       }
     }
+    if (held.size) {
+      const now = performance.now(), dt = lastStep ? (now - lastStep) / 1000 : 1 / 60;
+      lastStep = now;
+      if (inside()) walkStep(camera.position, controls.target, held, dt, { length: L, width: W, run });
+      moving = true;                              // keep frames coming while a key is down
+    } else {
+      lastStep = 0;
+    }
+    if (looked) { looked = false; moving = true; }
+    // inside, the head may tilt up as well as down; outside, the camera stays above the floor
+    controls.maxPolarAngle = inside() ? Math.PI - 0.05 : 1.605;
     if (controls.update()) moving = true;
 
     // keep panning from wandering under the floor or far above the roof

@@ -24,6 +24,7 @@ import { createFacadePanel } from './ui/facades.js';
 import { createPartsPanel } from './ui/soundParts.js';
 import { installSound } from './app/sound.js';
 import { installLight, LED_EXPOSURE_CAP } from './app/light.js';
+import { installFinishes } from './app/finishes.js';
 import { installPhotoreal } from './app/photoreal.js';
 import { installShell } from './app/shell.js';
 import { installClashes } from './app/clashes.js';
@@ -78,9 +79,9 @@ const rig = createSunRig(scene);
 const room = buildRoom(scene, show);
 overlay.add(room.dims, room.north, room.swings);
 const cutaway = createCutaway(room, show);
-const daylight = createDaylight(scene, {
-  albedo: { floor: albedoOf(matFloor), ceiling: albedoOf(matCeil), wall: albedoOf(matWall), mural: albedoOf(matMural), glass: 0.08 }
-});
+// the surfaces' reflectances, shared by the daylight bounce and the LED estimate; the View tab's colours update it
+const albedo = { floor: albedoOf(matFloor), ceiling: albedoOf(matCeil), wall: albedoOf(matWall), mural: albedoOf(matMural), glass: 0.08 };
+const daylight = createDaylight(scene, { albedo });
 const post = createPost(renderer, scene, camera);
 const furniture = createFurniture(room.stuff, () => {
   app.layouts?.changed();
@@ -95,13 +96,13 @@ const knownTypes = new Set(Object.keys(ASSETS));
 // the default layout is the Mix room: the studio and its treatment, ceiling panels fitted to the lights
 const defaultItems = [...parseLayout(mixRoom, knownTypes).items, ...coverCeiling(ROOM)];
 
-const app = { state, show, room, furniture, defaultItems, invalidate };
-// which pieces show: acoustic ones step aside while comparing without the treatment, ceiling-hung
-// ones while an LED profile layout is on
+const app = { state, show, room, furniture, defaultItems, invalidate, albedo };
+// which pieces show: acoustic ones step aside while comparing without the treatment, and every piece
+// (rugs and panels included) while an LED profile layout is on, which shows the room empty
 app.showPieces = () => {
   for (const g of furniture.items) {
     const a = ASSETS[g.userData.type];
-    g.visible = !(state.soundBare && a?.acoustic) && !(state.led && a?.mount === 'ceiling');
+    g.visible = !(state.soundBare && a?.acoustic) && !state.led;
   }
 };
 
@@ -228,6 +229,7 @@ app.facades = createFacadePanel(app);
 app.parts = createPartsPanel(app);
 app.sound = installSound(app, { overlay, canvas, camera, furniture, state, invalidate });
 app.light = installLight(app, { scene, overlay, canvas, camera, furniture, daylight, state, invalidate });
+installFinishes(app, { albedo, daylight, relight, invalidate });
 app.photoreal = installPhotoreal(app, { renderer, scene, camera, sky, daylight, state, invalidate, canvas });
 sceneChanged = app.photoreal.sceneChanged;
 installKeys(app);
