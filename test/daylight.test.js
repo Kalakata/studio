@@ -126,7 +126,8 @@ describe('shader patches still fit three.js', () => {
     expect(s).toContain('#if NUM_SUN_LIGHT_SHADOWS > 0');
   });
   it('window lights and bounce are gated to the room, environment to the outside', () => {
-    expect(patchLightsBegin(C.lights_fragment_begin)).toContain('if ( roomInside > 0.5 ) RE_Direct_RectArea');
+    expect(patchLightsBegin(C.lights_fragment_begin)).toContain('if ( roomInside > 0.5 && max3( rectAreaLight.color ) > 0.0 ) RE_Direct_RectArea');
+    expect(patchLightsBegin(C.lights_fragment_begin)).toContain('dot( geometryNormal, directLight.direction ) > 0.0 && max3( directLight.color ) > 0.0 ) ? getShadow');
     expect(patchLightsBegin(C.lights_fragment_begin)).toContain('roomInside * uBounce');
     expect(patchLightsMaps(C.lights_fragment_maps)).toContain('skyShare * iblRadiance');
   });

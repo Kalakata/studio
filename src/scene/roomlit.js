@@ -125,8 +125,13 @@ export function patchShadowChunk(chunk) {
   return chunk.slice(0, start) + '\t#else // BasicShadowMap, replaced with PCSS\n' + PCSS + '\n\t#endif\n\n\t' + chunk.slice(end);
 }
 
+// Work skipped where it cannot change the pixel: a rect-area light that is off (the unlit sun patches, the
+// LED profiles not in use) adds nothing, and a surface turned away from the sun, or a sun with no light,
+// gets no direct sun whatever its shadow says, so the PCSS lookup is not made.
 export function patchLightsBegin(chunk) {
-  let s = replaceOnce(chunk, 'RE_Direct_RectArea( rectAreaLight,', 'if ( roomInside > 0.5 ) RE_Direct_RectArea( rectAreaLight,', 'lights_fragment_begin');
+  let s = replaceOnce(chunk, 'RE_Direct_RectArea( rectAreaLight,', 'if ( roomInside > 0.5 && max3( rectAreaLight.color ) > 0.0 ) RE_Direct_RectArea( rectAreaLight,', 'lights_fragment_begin');
+  s = replaceOnce(s, '( directLight.visible && receiveShadow ) ? getShadow( directionalShadowMap[ i ]',
+    '( directLight.visible && receiveShadow && dot( geometryNormal, directLight.direction ) > 0.0 && max3( directLight.color ) > 0.0 ) ? getShadow( directionalShadowMap[ i ]', 'lights_fragment_begin');
   s = replaceOnce(s, '#ifdef USE_LIGHT_PROBES_GRID', 'irradiance += roomInside * uBounce;\n\n\t#ifdef USE_LIGHT_PROBES_GRID', 'lights_fragment_begin');
   return s;
 }
